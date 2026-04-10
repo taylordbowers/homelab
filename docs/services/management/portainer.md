@@ -4,7 +4,7 @@ Docker container management UI. Also hosts several other services in the same LX
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `192.168.1.122`
+- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
 - **Web UI:** port 9443 (HTTPS)
 - **Image:** `portainer/portainer-ce:lts`
 - **Resources:** 3 cores, 24GB RAM

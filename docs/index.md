@@ -6,18 +6,18 @@ A two-node Proxmox VE cluster running a full self-hosted stack — media, photos
 
 ```mermaid
 graph TD
-    Internet["🌐 Internet"] -->|Cloudflare DDNS| Router["🔀 Router\n192.168.1.254"]
-    Router --> PVE1["🖥️ pve-guide\n192.168.1.118\nXeon E3-1245 v3 / 32GB"]
-    Router --> PVE2["🖥️ pve2\n192.168.1.157\ni7-4790 / 32GB / GTX 980 Ti"]
+    Internet["🌐 Internet"] -->|Cloudflare DDNS| Router["🔀 Router\n10.0.0.254"]
+    Router --> PVE1["🖥️ pve-guide\n10.0.0.1\nXeon E3-1245 v3 / 32GB"]
+    Router --> PVE2["🖥️ pve2\n10.0.0.2\ni7-4790 / 32GB / GTX 980 Ti"]
 
     PVE1 --> AG["AdGuard Home\nDNS + Ad Blocking"]
     PVE1 --> NPM["Nginx Proxy Manager\n+ Homarr + Crafty + Restreamer"]
     PVE1 --> MEDIA["Media LXC\n22TB RAIDZ1 Data Store"]
     PVE1 --> ARR["mediaServer VM\nSonarr · Radarr · Lidarr\nBazarr · Prowlarr + VPN"]
 
-    PVE2 --> NC["Nextcloud AIO\n192.168.1.141"]
+    PVE2 --> NC["Nextcloud AIO\n10.0.0.12"]
     PVE2 --> JF["Jellyfin VM\nJellyfin · Jellyseerr\nImmich + GPU ML"]
-    PVE2 --> CLAUDE["Claude Code MCP\n192.168.1.178"]
+    PVE2 --> CLAUDE["Claude Code MCP\n10.0.0.13"]
 ```
 
 ## Quick Reference
@@ -40,15 +40,15 @@ graph TD
 
 | Host | IP |
 |---|---|
-| Router | 192.168.1.254 |
-| pve-guide | 192.168.1.118 |
-| pve2 | 192.168.1.157 |
+| Router | 10.0.0.254 |
+| pve-guide | 10.0.0.1 |
+| pve2 | 10.0.0.2 |
 | adguard CT | DHCP |
-| portainer CT | 192.168.1.122 |
-| media CT | 192.168.1.200 |
-| mediaServer VM | 192.168.1.120 |
-| nextcloud CT | 192.168.1.141 |
-| claude CT | 192.168.1.178 |
+| portainer CT | 10.0.0.11 |
+| media CT | 10.0.0.20 |
+| mediaServer VM | 10.0.0.10 |
+| nextcloud CT | 10.0.0.12 |
+| claude CT | 10.0.0.13 |
 | jellyfin VM | DHCP |
 
 ## What's Running

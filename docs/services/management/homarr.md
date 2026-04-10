@@ -4,7 +4,7 @@ Homelab dashboard — shows all services, system stats, and quick links in one p
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `192.168.1.122`
+- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
 - **Port:** 7575
 - **URL:** `home.taylorsfunlab.com`
 - **Image:** `ghcr.io/homarr-labs/homarr:latest`

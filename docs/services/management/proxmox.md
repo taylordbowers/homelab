@@ -5,8 +5,8 @@ Hypervisor platform running on both nodes in a cluster configuration.
 ## Cluster
 
 - **Name:** two-node cluster
-- **Node 1:** pve-guide (192.168.1.118) — primary
-- **Node 2:** pve2 (192.168.1.157) — secondary
+- **Node 1:** pve-guide (10.0.0.1) — primary
+- **Node 2:** pve2 (10.0.0.2) — secondary
 - **Web UI:** `proxmox.taylorsfunlab.com` (proxied via NPM)
 
 ## Version

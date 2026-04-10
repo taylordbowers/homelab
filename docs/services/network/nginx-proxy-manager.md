@@ -4,7 +4,7 @@ Reverse proxy with a web UI for managing proxy hosts and SSL certificates.
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `192.168.1.122`
+- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
 - **Admin UI:** port 81
 - **HTTP:** port 80
 - **HTTPS:** port 443
@@ -19,12 +19,12 @@ Certificate renews automatically every 90 days.
 
 | Domain | Backend | Notes |
 |---|---|---|
-| `home.taylorsfunlab.com` | 192.168.1.122:7575 | Homarr dashboard |
-| `crafty.taylorsfunlab.com` | 192.168.1.122:8123 | Crafty Controller |
-| `nc.taylorsfunlab.com` | 192.168.1.141:11000 | Nextcloud AIO |
-| `proxmox.taylorsfunlab.com` | 192.168.1.118:8006 | Proxmox UI (HTTPS backend) |
-| `radarr.taylorsfunlab.com` | 192.168.1.120:7878 | Radarr |
-| `sonarr.taylorsfunlab.com` | 192.168.1.120:8989 | Sonarr |
+| `home.taylorsfunlab.com` | 10.0.0.11:7575 | Homarr dashboard |
+| `crafty.taylorsfunlab.com` | 10.0.0.11:8123 | Crafty Controller |
+| `nc.taylorsfunlab.com` | 10.0.0.12:11000 | Nextcloud AIO |
+| `proxmox.taylorsfunlab.com` | 10.0.0.1:8006 | Proxmox UI (HTTPS backend) |
+| `radarr.taylorsfunlab.com` | 10.0.0.10:7878 | Radarr |
+| `sonarr.taylorsfunlab.com` | 10.0.0.10:8989 | Sonarr |
 
 ## Docker Compose
 

@@ -22,9 +22,9 @@ Automated media management stack running on the mediaServer VM (ID 119). All dow
 
 - **VM:** mediaServer (ID 119) on pve-guide
 - **OS:** Ubuntu 24.04 LTS
-- **IP:** 192.168.1.120
+- **IP:** 10.0.0.10
 - **Resources:** 4 cores, 12GB RAM, 64GB SSD (OS)
-- **Data mount:** `//192.168.1.200/data` (22TB, SMB from media LXC)
+- **Data mount:** `//10.0.0.20/data` (22TB, SMB from media LXC)
 - **Compose file:** `/docker/servarr/compose.yaml`
 
 ## VPN Architecture

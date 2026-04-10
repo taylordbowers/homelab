@@ -5,7 +5,7 @@ Full self-hosted cloud suite — file storage, calendar, contacts, document edit
 ## Setup
 
 - **Host:** nextcloud LXC (CT 101) on pve2
-- **IP:** 192.168.1.141
+- **IP:** 10.0.0.12
 - **URL:** `nc.taylorsfunlab.com`
 - **Install type:** Nextcloud All-in-One (AIO) via Docker
 
@@ -51,7 +51,7 @@ Then access the AIO admin UI at `http://[server-ip]:8080` to configure and start
 
 ## Nginx Proxy Manager Config
 
-NPM proxies `nc.taylorsfunlab.com` → `192.168.1.141:11000` with SSL. Required headers for Nextcloud:
+NPM proxies `nc.taylorsfunlab.com` → `10.0.0.12:11000` with SSL. Required headers for Nextcloud:
 
 ```nginx
 proxy_set_header X-Real-IP $remote_addr;

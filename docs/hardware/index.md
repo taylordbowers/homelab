@@ -6,7 +6,7 @@ Two physical servers running Proxmox VE in a cluster, connected over a standard 
 
 | | pve-guide (Node 1) | pve2 (Node 2) |
 |---|---|---|
-| **IP** | 192.168.1.118 | 192.168.1.157 |
+| **IP** | 10.0.0.1 | 10.0.0.2 |
 | **CPU** | Intel Xeon E3-1245 v3 | Intel Core i7-4790 |
 | **Cores** | 8 threads @ 3.4GHz | 8 threads @ 3.6GHz |
 | **RAM** | 32GB | 32GB |
@@ -32,4 +32,4 @@ pve2
 
 ## Network
 
-Both nodes connect to the same `/24` home network (`192.168.1.0/24`) via the main router at `192.168.1.254`. No VLANs — flat network with AdGuard Home handling DNS.
+Both nodes connect to the same `/24` home network (`10.0.0.0/24`) via the main router at `10.0.0.254`. No VLANs — flat network with AdGuard Home handling DNS.

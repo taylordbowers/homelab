@@ -56,7 +56,7 @@ Each node has an SSD pool named `flash` used for container rootfs and VM disks. 
 
 The media LXC exports data over NFS to other services:
 
-- `192.168.1.118:/tank_new/subvol-200-disk-0/immich` → mounted in jellyfin VM at `/data/immich`
+- `10.0.0.1:/tank_new/subvol-200-disk-0/immich` → mounted in jellyfin VM at `/data/immich`
 
 ## Backup Strategy
 

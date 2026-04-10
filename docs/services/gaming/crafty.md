@@ -4,7 +4,7 @@ Web-based Minecraft server management platform. Supports Java and Bedrock editio
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `192.168.1.122`
+- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
 - **Web UI:** port 8443 (HTTPS) / 8123 (HTTP)
 - **URL:** `crafty.taylorsfunlab.com`
 - **Image:** `registry.gitlab.com/crafty-controller/crafty-4:latest`
