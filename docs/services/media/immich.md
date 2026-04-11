@@ -4,120 +4,61 @@ Self-hosted Google Photos replacement. Automatic photo backup, albums, sharing, 
 
 ## Setup
 
-- **Host:** jellyfin VM (ID 219) on pve2
+- **Host:** CT 104 (immich LXC) on pve2
+- **IP:** 192.168.1.179
 - **Port:** 2283
-- **GPU:** NVIDIA GTX 980 Ti — used for CUDA-accelerated ML inference
-- **Photo library:** NFS-mounted from media LXC (`/data/immich`, 4.5TB)
+- **GPU:** NVIDIA GTX 980 Ti via LXC device passthrough (shared with CT 101 and CT 103)
+
+> **Migrated 2026-04-10:** Previously ran inside VM 219 alongside Jellyfin. Split into its own dedicated LXC container. GPU access is now via LXC device passthrough rather than PCIe passthrough, allowing the GPU to be shared with Jellyfin and Nextcloud simultaneously.
+
+## Container Config
+
+- **Type:** Privileged LXC, Ubuntu 24.04
+- **CPU:** 4 cores
+- **RAM:** 8 GB
+- **Disk:** 64 GB (flash ZFS)
+- **Features:** `nesting=1` (Docker-in-LXC)
+- **Autostart:** `systemd: immich.service`
 
 ## Architecture
 
-Immich runs as a multi-container stack:
-
 | Container | Image | Role |
-|---|---|---|
-| `immich_server` | `immich-app/immich-server:release` | Main API + web UI |
-| `immich_machine_learning` | `immich-app/immich-machine-learning:release-cuda` | Facial recognition + CLIP embeddings |
+|-----------|-------|------|
+| `immich_server` | `ghcr.io/immich-app/immich-server:release` | Main API + web UI |
+| `immich_machine_learning` | `ghcr.io/immich-app/immich-machine-learning:release-cuda` | Facial recognition + CLIP embeddings (GPU) |
 | `immich_postgres` | `tensorchord/pgvecto-rs:pg14` | Database |
 | `immich_redis` | `redis:6.2-alpine` | Cache |
 
 ## GPU Acceleration
 
-The machine learning container uses the `release-cuda` image to run inference on the GTX 980 Ti. This enables:
+The machine learning container uses the `release-cuda` image for GPU-accelerated inference on the GTX 980 Ti via `runtime: nvidia`. This enables:
 
 - **Facial recognition** — clusters faces into people automatically
-- **Smart search** — CLIP embeddings for natural language photo search (e.g. "dog at the beach")
+- **Smart search** — CLIP embeddings for natural language photo search
 
-The NVIDIA Container Toolkit (`nvidia-container-toolkit`) is installed in the jellyfin VM, and Docker is configured with `nvidia` as the default runtime.
+See [GPU Passthrough](../../infrastructure/gpu-passthrough.md) for full LXC config details.
 
-### Key config
+## Data Storage
 
-`docker-compose.yml` — ML service:
-```yaml
-immich-machine-learning:
-  image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-cuda
-  deploy:
-    resources:
-      reservations:
-        devices:
-          - driver: nvidia
-            count: 1
-            capabilities: [gpu]
-```
+All photo and database data lives on pve-guide's `tank_new` ZFS array — it was never moved during the migration.
 
-`.env`:
+| Mount | Source | Destination |
+|-------|--------|-------------|
+| Uploads + DB | `192.168.1.118:/tank_new/subvol-200-disk-0/immich` (NFS) | `/data/immich` |
+
+- `/data/immich/uploads` — photo library
+- `/data/immich/db` — postgres data directory
+
+## Key Config (.env)
+
 ```env
+DB_PASSWORD=immich_db_pass
+DB_USERNAME=postgres
+DB_DATABASE_NAME=immich
+IMMICH_VERSION=release
+DB_HOSTNAME=database
+REDIS_HOSTNAME=redis
+UPLOAD_LOCATION=/data/immich/uploads
+DB_DATA_LOCATION=/data/immich/db
 MACHINE_LEARNING_DEVICE=cuda
 ```
-
-## Docker Compose
-
-```yaml
-name: immich
-
-services:
-  immich-server:
-    container_name: immich_server
-    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
-    volumes:
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload
-      - /mnt/photos:/mnt/photos
-      - /etc/localtime:/etc/localtime:ro
-    env_file:
-      - .env
-    ports:
-      - 2283:2283
-    depends_on:
-      - redis
-      - database
-    restart: always
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
-  immich-machine-learning:
-    container_name: immich_machine_learning
-    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-cuda
-    volumes:
-      - model-cache:/cache
-      - ${UPLOAD_LOCATION}:/usr/src/app/upload:ro
-    env_file:
-      - .env
-    restart: always
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-
-  redis:
-    container_name: immich_redis
-    image: docker.io/redis:6.2-alpine
-    healthcheck:
-      test: redis-cli ping || exit 1
-    restart: always
-
-  database:
-    container_name: immich_postgres
-    image: docker.io/tensorchord/pgvecto-rs:pg14-v0.2.0
-    environment:
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
-      POSTGRES_USER: ${DB_USERNAME}
-      POSTGRES_DB: ${DB_DATABASE_NAME}
-    volumes:
-      - ${DB_DATA_LOCATION}:/var/lib/postgresql/data
-    restart: always
-
-volumes:
-  model-cache:
-```
-
-## Notes
-
-- Immich was originally run in an LXC (CT 220) but was migrated to the jellyfin VM to gain GPU access for ML inference — LXCs cannot do PCIe passthrough
-- Photo data lives on the media LXC's `tank_new` pool and is NFS-mounted into the VM
