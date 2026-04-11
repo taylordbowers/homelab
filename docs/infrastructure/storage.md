@@ -54,7 +54,7 @@ Each node has an SSD pool named `flash` used for container rootfs and VM disks. 
 | pve-guide | 932GB | Container rootfs: adguard (4GB), portainer (24GB), media (800GB) |
 | pve2 | 932GB | Container rootfs: nextcloud CT101 (40GB), claude CT102 (32GB), jellyfin CT103 (64GB), immich CT104 (64GB), amp VM300 disk (64GB) |
 
-> **Note:** VM 219 (jellyfin VM) disk was decommissioned 2026-04-10 after migration to CT 103 and CT 104. The zvol (`flash/vm-219-disk-0`) was retained briefly as a recovery source and can be destroyed once stability is confirmed.
+> **Note:** VM 219 (old Jellyfin monolith) was fully deleted 2026-04-11 after confirmed stability of CT 103 and CT 104. The VM and its disk (`flash/vm-219-disk-0`) have been removed.
 
 ## NFS Mounts
 

@@ -8,7 +8,7 @@
 |---|---|
 | **CPU** | Intel Core i7-4790 @ 3.60GHz (4c/8t) |
 | **RAM** | 32GB |
-| **GPU** | NVIDIA GeForce GTX 980 Ti (6GB VRAM) — passed through to jellyfin VM |
+| **GPU** | NVIDIA GeForce GTX 980 Ti (6GB VRAM) — shared via LXC device passthrough to CT 101, CT 103, CT 104 |
 | **OS Disk** | 932GB SSD → Proxmox root (LVM) |
 | **Flash Pool** | 932GB SSD → `flash` ZFS (same disk, partitioned) |
 | **HDD** | 3.6TB HDD → additional storage |
@@ -25,18 +25,22 @@ flash   928G  used  ONLINE
 
 ## GPU Passthrough
 
-The GTX 980 Ti is passed through entirely to the `jellyfin` VM (ID 219) using PCIe passthrough (`hostpci0: 0000:02:00.0`). Inside the VM:
+The GTX 980 Ti is shared across three LXC containers simultaneously via LXC device bind-mounts — **not** exclusive PCIe passthrough. This replaced the old VM 219 PCIe passthrough setup after the 2026-04-10 migration.
 
-- **Jellyfin** uses it for hardware video transcoding
-- **Immich machine learning** uses it for CUDA-accelerated facial recognition and smart search (image embeddings via the `release-cuda` image)
+- **CT 103 (jellyfin)** — NVENC hardware transcoding (h264, hevc, av1)
+- **CT 104 (immich)** — CUDA-accelerated ML inference (facial recognition, CLIP embeddings)
+- **CT 101 (nextcloud)** — GPU available, not actively used yet
 
-NVIDIA driver version: 535.288.01 | CUDA: 12.2
+NVIDIA driver version: 535.261.03 | CUDA: 12.2
+
+See [GPU Passthrough](../infrastructure/gpu-passthrough.md) for full config details.
 
 ## Containers & VMs
 
 | ID | Name | Type | Role |
 |---|---|---|---|
-| CT 101 | nextcloud | LXC | Nextcloud AIO |
+| CT 101 | nextcloud | LXC | Nextcloud AIO — GPU enabled |
 | CT 102 | claude | LXC | Claude Code MCP server |
-| VM 219 | jellyfin | VM | Jellyfin · Immich · Jellyseerr · Jellystat |
+| CT 103 | jellyfin | LXC | Jellyfin · Jellyseerr · Jellystat — GPU enabled |
+| CT 104 | immich | LXC | Immich (photos + CUDA ML) — GPU enabled |
 | VM 300 | amp-gameserver | VM | AMP multi-game server (stopped) |

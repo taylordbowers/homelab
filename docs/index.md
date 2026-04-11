@@ -15,9 +15,10 @@ graph TD
     PVE1 --> MEDIA["Media LXC\n22TB RAIDZ1 Data Store"]
     PVE1 --> ARR["mediaServer VM\nSonarr · Radarr · Lidarr\nBazarr · Prowlarr + VPN"]
 
-    PVE2 --> NC["Nextcloud AIO\n10.0.0.12"]
-    PVE2 --> JF["Jellyfin VM\nJellyfin · Jellyseerr\nImmich + GPU ML"]
-    PVE2 --> CLAUDE["Claude Code MCP\n10.0.0.13"]
+    PVE2 --> NC["Nextcloud AIO\nCT 101"]
+    PVE2 --> JF["Jellyfin CT 103\nJellyfin · Jellyseerr · Jellystat\nGPU NVENC"]
+    PVE2 --> IMMICH["Immich CT 104\nPhotos + CUDA ML"]
+    PVE2 --> CLAUDE["Claude Code MCP\nCT 102"]
 ```
 
 ## Quick Reference
@@ -26,9 +27,9 @@ graph TD
 |---|---|---|
 | Proxmox UI | `proxmox.taylorsfunlab.com` | pve-guide |
 | Dashboard | `home.taylorsfunlab.com` | portainer CT |
-| Jellyfin | `stream.taylorsfunlab.com` | jellyfin VM |
-| Jellyseerr | port 5055 | jellyfin VM |
-| Immich | port 2283 | jellyfin VM |
+| Jellyfin | `stream.taylorsfunlab.com` | jellyfin CT (CT 103) |
+| Jellyseerr | port 5055 | jellyfin CT (CT 103) |
+| Immich | port 2283 | immich CT (CT 104) |
 | Nextcloud | `nc.taylorsfunlab.com` | nextcloud CT |
 | Sonarr | `sonarr.taylorsfunlab.com` | mediaServer VM |
 | Radarr | `radarr.taylorsfunlab.com` | mediaServer VM |
@@ -49,7 +50,8 @@ graph TD
 | mediaServer VM | 10.0.0.10 |
 | nextcloud CT | 10.0.0.12 |
 | claude CT | 10.0.0.13 |
-| jellyfin VM | DHCP |
+| jellyfin CT (CT 103) | 192.168.1.160 |
+| immich CT (CT 104) | 192.168.1.179 |
 
 ## What's Running
 

@@ -22,6 +22,6 @@ The MCP server connects to the Proxmox API and is configured in `~/.claude/` on 
 ## Key Practices
 
 - LXCs run on `flash` ZFS pool for fast subvolume creation and snapshotting
-- PCIe passthrough used for GPU (GTX 980 Ti → jellyfin VM) and iGPU (→ mediaServer VM)
+- LXC device passthrough for GPU (GTX 980 Ti → CT 101, CT 103, CT 104 simultaneously) and iGPU passthrough (→ mediaServer VM)
 - `onboot: 1` set on all production containers/VMs for automatic startup
 - QEMU Guest Agent installed on all VMs for proper shutdown handling and exec access
