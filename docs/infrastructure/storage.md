@@ -13,11 +13,13 @@ graph LR
         FLASH2["flash ZFS\n932GB SSD"]
     end
 
-    TANK -->|NFS mount| MEDIA["media LXC\n/data (22TB)"]
-    MEDIA -->|SMB| MS["mediaServer VM\n/data"]
-    MEDIA -->|NFS| JF["jellyfin VM\n/data/immich"]
+    TANK -->|NFS mount| MEDIA["media LXC CT200\n/data (22TB)"]
+    MEDIA -->|SMB| MS["mediaServer VM 119\n/data"]
+    MEDIA -->|CIFS| JF["jellyfin CT103\n/data"]
+    TANK -->|NFS| IMMICH["immich CT104\n/data/immich"]
+    TANK -->|NFS| JF2["jellyfin CT103\n/mnt/guide"]
     FLASH1 -->|subvolumes| CT1["Container rootfs\n(adguard, portainer, media)"]
-    FLASH2 -->|subvolumes| CT2["Container rootfs\n(nextcloud, claude)\nVM disks (jellyfin, amp)"]
+    FLASH2 -->|subvolumes| CT2["Container rootfs\n(nextcloud CT101, claude CT102,\njellyfin CT103, immich CT104)"]
 ```
 
 ## Pools
@@ -28,12 +30,12 @@ graph LR
 
 **Current usage:** 4.5TB / 12TB quota (38%)
 
-The pool is exposed to the `media` LXC as a ZFS subvolume (`tank_new:subvol-200-disk-0`) mounted at `/data`. The media LXC then re-exports this via SMB and NFS to other VMs.
+The pool is exposed to the `media` LXC as a ZFS subvolume (`tank_new:subvol-200-disk-0`) mounted at `/data`. The media LXC re-exports this via SMB to other services.
 
 **Data layout inside `/data`:**
 
 | Path | Contents |
-|---|---|
+|------|----------|
 | `/data/Movies` | 150+ movies |
 | `/data/Shows` | 20+ TV series |
 | `/data/Music` | Music library |
@@ -47,21 +49,31 @@ The pool is exposed to the `media` LXC as a ZFS subvolume (`tank_new:subvol-200-
 
 Each node has an SSD pool named `flash` used for container rootfs and VM disks. ZFS subvolumes are created per-container for easy snapshotting.
 
-| Node | Pool Size | Usage |
-|---|---|---|
-| pve-guide | 932GB | Container rootfs (adguard 4GB, portainer 24GB, media 800GB) + Docker volumes |
-| pve2 | 932GB | Container rootfs (nextcloud 40GB, claude 32GB) + VM disks (jellyfin 64GB, amp 64GB) |
+| Node | Pool Size | Contents |
+|------|-----------|----------|
+| pve-guide | 932GB | Container rootfs: adguard (4GB), portainer (24GB), media (800GB) |
+| pve2 | 932GB | Container rootfs: nextcloud CT101 (40GB), claude CT102 (32GB), jellyfin CT103 (64GB), immich CT104 (64GB), amp VM300 disk (64GB) |
 
-## NFS Exports
+> **Note:** VM 219 (jellyfin VM) disk was decommissioned 2026-04-10 after migration to CT 103 and CT 104. The zvol (`flash/vm-219-disk-0`) was retained briefly as a recovery source and can be destroyed once stability is confirmed.
 
-The media LXC exports data over NFS to other services:
+## NFS Mounts
 
-- `10.0.0.1:/tank_new/subvol-200-disk-0/immich` → mounted in jellyfin VM at `/data/immich`
+| Export (pve-guide) | Mounted In | Path |
+|--------------------|-----------|------|
+| `/tank_new/subvol-200-disk-0/immich` | CT 104 (immich) | `/data/immich` |
+| `/tank_new/subvol-200-disk-0` | CT 103 (jellyfin) | `/mnt/guide` |
+
+## SMB/CIFS Mounts
+
+| Share (CT 200) | Mounted In | Path |
+|----------------|-----------|------|
+| `//192.168.1.200/data` | CT 103 (jellyfin) | `/data` |
+| `//192.168.1.200/data` | VM 119 (mediaServer) | `/data` |
 
 ## Backup Strategy
 
 !!! warning "Work in progress"
-    Formal backup strategy is not fully implemented. Proxmox backup jobs should be configured for critical VMs and containers.
+    Formal backup strategy is not fully implemented. Proxmox backup jobs should be configured for critical containers.
 
 Current state:
 - ZFS RAIDZ1 on `tank_new` provides drive-failure protection (not a backup)
