@@ -5,7 +5,7 @@ Self-hosted Google Photos replacement. Automatic photo backup, albums, sharing, 
 ## Setup
 
 - **Host:** CT 104 (immich LXC) on pve2
-- **IP:** 192.168.1.179
+- **IP:** 10.0.0.15
 - **Port:** 2283
 - **GPU:** NVIDIA GTX 980 Ti via LXC device passthrough (shared with CT 101 and CT 103)
 
@@ -42,7 +42,7 @@ All photo and database data lives on pve-guide's `tank_new` ZFS array — it was
 
 | Mount | Source | Destination |
 |-------|--------|-------------|
-| Uploads + DB | `192.168.1.118:/tank_new/subvol-200-disk-0/immich` (NFS) | `/data/immich` |
+| Uploads + DB | `10.0.0.1:/tank_new/subvol-200-disk-0/immich` (NFS) | `/data/immich` |
 
 - `/data/immich/uploads` — photo library
 - `/data/immich/db` — postgres data directory

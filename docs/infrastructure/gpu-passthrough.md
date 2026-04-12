@@ -8,7 +8,7 @@ The NVIDIA GTX 980 Ti on pve2 is shared across three LXC containers simultaneous
 - **VRAM:** 6 GB
 - **Host driver:** 535.261.03
 - **CUDA:** 12.2
-- **Node:** pve2 (192.168.1.157)
+- **Node:** pve2 (10.0.0.2)
 
 ## Containers with GPU Access
 

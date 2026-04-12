@@ -50,8 +50,8 @@ graph TD
 | mediaServer VM | 10.0.0.10 |
 | nextcloud CT | 10.0.0.12 |
 | claude CT | 10.0.0.13 |
-| jellyfin CT (CT 103) | 192.168.1.160 |
-| immich CT (CT 104) | 192.168.1.179 |
+| jellyfin CT (CT 103) | 10.0.0.14 |
+| immich CT (CT 104) | 10.0.0.15 |
 
 ## What's Running
 

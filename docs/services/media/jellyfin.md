@@ -5,7 +5,7 @@ Personal media server. Streams movies, TV shows, and music to any device.
 ## Setup
 
 - **Host:** CT 103 (jellyfin LXC) on pve2
-- **IP:** 192.168.1.160
+- **IP:** 10.0.0.14
 - **Port:** 8096
 - **URL:** `stream.taylorsfunlab.com`
 - **GPU:** NVIDIA GTX 980 Ti via LXC device passthrough (shared with CT 101 and CT 104)
@@ -40,7 +40,7 @@ jellyfin:
     - TZ=America/Chicago
     - NVIDIA_VISIBLE_DEVICES=all
     - NVIDIA_DRIVER_CAPABILITIES=compute,video,utility
-    - JELLYFIN_PublishedServerUrl=http://192.168.1.160
+    - JELLYFIN_PublishedServerUrl=http://10.0.0.14
   volumes:
     - /docker/jellyfin/config:/config
     - /data:/data
@@ -88,8 +88,8 @@ See [GPU Passthrough](../../infrastructure/gpu-passthrough.md) for full LXC conf
 
 | Mount | Source | Destination |
 |-------|--------|-------------|
-| Media files | `//192.168.1.200/data` (CIFS from CT 200) | `/data` |
-| pve-guide tank | `192.168.1.118:/tank_new/subvol-200-disk-0` (NFS) | `/mnt/guide` |
+| Media files | `//10.0.0.20/data` (CIFS from CT 200) | `/data` |
+| pve-guide tank | `10.0.0.1:/tank_new/subvol-200-disk-0` (NFS) | `/mnt/guide` |
 
 ## Media Library
 

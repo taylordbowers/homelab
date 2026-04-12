@@ -65,8 +65,8 @@ Each node has an SSD pool named `flash` used for container rootfs and VM disks. 
 
 | Share (CT 200) | Mounted In | Path |
 |----------------|-----------|------|
-| `//192.168.1.200/data` | CT 103 (jellyfin) | `/data` |
-| `//192.168.1.200/data` | VM 119 (mediaServer) | `/data` |
+| `//10.0.0.20/data` | CT 103 (jellyfin) | `/data` |
+| `//10.0.0.20/data` | VM 119 (mediaServer) | `/data` |
 
 ## Backup Strategy
 
