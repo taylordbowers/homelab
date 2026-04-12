@@ -1,6 +1,6 @@
 # GPU Passthrough (LXC)
 
-The NVIDIA GTX 980 Ti on pve2 is shared across three LXC containers simultaneously via device bind-mounts — **not** PCIe passthrough. This replaces the old exclusive PCIe passthrough used by VM 219.
+The NVIDIA GTX 980 Ti on pve2 is shared across three LXC containers simultaneously via device bind-mounts.
 
 ## GPU Details
 

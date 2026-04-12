@@ -9,8 +9,6 @@ Self-hosted Google Photos replacement. Automatic photo backup, albums, sharing, 
 - **Port:** 2283
 - **GPU:** NVIDIA GTX 980 Ti via LXC device passthrough (shared with CT 101 and CT 103)
 
-> **Migrated 2026-04-10:** Previously ran inside VM 219 alongside Jellyfin. Split into its own dedicated LXC container. GPU access is now via LXC device passthrough rather than PCIe passthrough, allowing the GPU to be shared with Jellyfin and Nextcloud simultaneously.
-
 ## Container Config
 
 - **Type:** Privileged LXC, Ubuntu 24.04

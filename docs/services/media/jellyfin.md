@@ -10,8 +10,6 @@ Personal media server. Streams movies, TV shows, and music to any device.
 - **URL:** `stream.taylorsfunlab.com`
 - **GPU:** NVIDIA GTX 980 Ti via LXC device passthrough (shared with CT 101 and CT 104)
 
-> **Migrated 2026-04-10:** Previously ran as VM 219 with exclusive PCIe passthrough. Converted to a privileged LXC container so the GPU can be shared across Nextcloud (CT 101), Jellyfin (CT 103), and Immich (CT 104) simultaneously.
-
 ## Container Config
 
 - **Type:** Privileged LXC, Ubuntu 24.04

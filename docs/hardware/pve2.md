@@ -25,7 +25,7 @@ flash   928G  used  ONLINE
 
 ## GPU Passthrough
 
-The GTX 980 Ti is shared across three LXC containers simultaneously via LXC device bind-mounts — **not** exclusive PCIe passthrough. This replaced the old VM 219 PCIe passthrough setup after the 2026-04-10 migration.
+The GTX 980 Ti is shared across three LXC containers simultaneously via LXC device bind-mounts.
 
 - **CT 103 (jellyfin)** — NVENC hardware transcoding (h264, hevc, av1)
 - **CT 104 (immich)** — CUDA-accelerated ML inference (facial recognition, CLIP embeddings)
