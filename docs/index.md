@@ -78,7 +78,7 @@ Addresses on this site are placeholders (`10.0.0.x`). They don't match the real 
 
 ### Media
 - **Jellyfin**: media server with NVENC hardware transcoding (RTX A3000)
-- **Immich**: Google Photos replacement with facial recognition and smart search
+- **Immich**: Google Photos replacement with GPU-accelerated facial recognition and smart search
 - **Jellyseerr** (Seerr): media request management
 - **Jellystat**: Jellyfin analytics
 - **Sonarr / Radarr / Lidarr**: automated media management

@@ -16,7 +16,7 @@ The NVIDIA RTX A3000 Laptop GPU on `pve` is shared by three LXC containers at on
 |----|------|---------|
 | CT 101 | nextcloud | Available (not actively used) |
 | CT 103 | jellyfin | NVENC/NVDEC transcoding |
-| CT 104 | immich | GPU speech-to-text service (Whisper) for the voice agents. Immich's ML container currently runs on CPU (see [Immich](../services/media/immich.md)) |
+| CT 104 | immich | CUDA ML inference (facial recognition, CLIP), plus the GPU speech-to-text service (Whisper) for the voice agents |
 
 ## LXC Config (`/etc/pve/lxc/NNN.conf`)
 
@@ -141,4 +141,4 @@ docker run --rm --runtime=nvidia -e NVIDIA_VISIBLE_DEVICES=all nvidia/cuda:12.2.
 
 ## History
 
-Before July 2026 a **GTX 980 Ti** (Maxwell) on the old `pve2` node did this job with the same pattern (hand-written `lxc.mount.entry` lines). Moving to the A3000 added AV1 encode and a much newer CUDA compute capability. The Immich ML container had been forced onto CPU because Maxwell dropped out of CUDA 12 support.
+Before July 2026 a **GTX 980 Ti** (Maxwell) on the old `pve2` node did this job with the same pattern (hand-written `lxc.mount.entry` lines). Moving to the A3000 added AV1 encode and a much newer CUDA compute capability. It also let the Immich ML container go back to CUDA, since Maxwell had been dropped from CUDA 12 support and forced it onto CPU.

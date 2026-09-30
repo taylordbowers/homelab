@@ -43,6 +43,7 @@ A second channel, `#homelab-alerts`, gets Uptime Kuma UP/DOWN notifications and 
 
 ## Safety
 
+- **Owner-only:** the bot ignores every Discord user not on an explicit user-ID allowlist, in channels, DMs, and voice (other people's audio is dropped before transcription). An empty allowlist means it ignores everyone
 - Only responds in a designated channel of a private server, and in DMs
 - Per-user cooldown and a global concurrency cap
 - Mass mentions (`@everyone` / `@here`) are stripped from output

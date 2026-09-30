@@ -23,20 +23,33 @@ Self-hosted Google Photos replacement with automatic photo backup, albums, shari
 | Container | Image | Role |
 |-----------|-------|------|
 | `immich_server` | `ghcr.io/immich-app/immich-server:release` | Main API + web UI |
-| `immich_machine_learning` | `ghcr.io/immich-app/immich-machine-learning:release` | Facial recognition + CLIP embeddings (CPU) |
+| `immich_machine_learning` | `ghcr.io/immich-app/immich-machine-learning:release-cuda` | Facial recognition + CLIP embeddings (GPU) |
 | `immich_postgres` | `tensorchord/pgvecto-rs:pg14-v0.2.0` | Database |
 | `immich_redis` | `redis:6.2-alpine` | Cache |
 | `whisper-stt` | local build | GPU speech-to-text for the [Byte](../automation/discord-bot.md) and [Jarvis](../automation/jarvis-hud.md) voice agents (unrelated to Immich; it runs here because this CT already has the GPU) |
 
-## Machine Learning: CPU for now
+## GPU Acceleration
 
-The ML container runs the **CPU** image. That was forced on the old GTX 980 Ti, since Maxwell cards aren't supported by the CUDA 12 builds that `release-cuda` ships. The current RTX A3000 (Ampere) is fully supported, so moving back to GPU inference means:
+The ML container uses the `release-cuda` image with `runtime: nvidia`, so facial recognition and CLIP smart-search embeddings run on the RTX A3000 through ONNX Runtime's CUDA provider:
 
-1. Switch the ML image to `…-machine-learning:release-cuda`
-2. Add `runtime: nvidia` and `NVIDIA_VISIBLE_DEVICES=all` to that service
-3. Keep `MACHINE_LEARNING_DEVICE=cuda` in `.env` (already set)
+```yaml
+immich-machine-learning:
+  image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}-cuda
+  runtime: nvidia
+  environment:
+    - NVIDIA_VISIBLE_DEVICES=all
+    - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+```
 
-The library is small enough that CPU inference is fine day to day. GPU mainly speeds up a full re-index.
+Models load on demand and are unloaded after a few idle minutes, so the GPU memory is only held while jobs run. It shares the card with Jellyfin transcodes and the Whisper service without trouble on 6GB.
+
+!!! note "History"
+    From April to September 2026 the ML container ran on **CPU**. The old GTX 980 Ti (Maxwell) isn't supported by the CUDA 12 builds that `release-cuda` ships. After the move to the Ampere A3000 it went back to GPU.
+
+!!! tip "Harmless log noise"
+    Inside an LXC, ONNX Runtime logs `pthread_setaffinity_np failed … Invalid argument` at model load. It's trying to pin threads to CPUs the container's cpuset doesn't expose. Inference is unaffected.
+
+See [GPU Passthrough](../../infrastructure/gpu-passthrough.md) for full LXC config details.
 
 ## Data Storage
 
