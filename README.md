@@ -17,7 +17,7 @@ A two-node Proxmox VE cluster running a full self-hosted stack: media, photos, c
 | AdGuard Home | DNS ad blocking + internal DNS rewrites |
 | Nginx Proxy Manager | Reverse proxy + wildcard SSL |
 | Tailscale | Remote access (subnet router + exit node) |
-| Uptime Kuma | 43 monitors, alerts to Discord + email |
+| Uptime Kuma | 42 monitors, alerts to Discord + email |
 | Apache Guacamole | Browser-based RDP/VNC gateway |
 | Crafty Controller + AMP | Minecraft + multi-game servers |
 | Portainer + Homarr | Container management + dashboard |

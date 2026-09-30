@@ -6,7 +6,7 @@ When a monitor goes down, a headless Claude Code session diagnoses the problem a
 
 ```mermaid
 graph LR
-    Kuma["Uptime Kuma\n(43 monitors)"] -->|webhook| Recv["Receiver\nCT 102"]
+    Kuma["Uptime Kuma\n(42 monitors)"] -->|webhook| Recv["Receiver\nCT 102"]
     Recv -->|batch 45s,\nsuppress flaps| Guard["Guardrail script"]
     Guard -->|budget ok,\nnot in cooldown| Claude["Headless Claude\n(20-min cap)"]
     Claude -->|allowlisted fix| Target["Affected guest"]

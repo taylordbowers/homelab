@@ -103,7 +103,7 @@ Addresses on this site are placeholders (`10.0.0.x`). They don't match the real 
 - **Proxmox VE**: hypervisor cluster
 - **Portainer**: Docker container management
 - **Homarr**: homelab dashboard
-- **Uptime Kuma**: 43 monitors, with alerts to Discord and email that feed the self-healing pipeline
+- **Uptime Kuma**: 42 monitors, with alerts to Discord and email that feed the self-healing pipeline
 - **Filebrowser**: host-level filesystem access on each node
 - **Apache Guacamole**: browser-based RDP/VNC gateway
 - **Nightly vzdump backups** of every guest (see [Backups](infrastructure/backups.md))

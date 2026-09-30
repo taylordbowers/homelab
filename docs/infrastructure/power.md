@@ -33,7 +33,7 @@ The laptop also has **lid-close and sleep disabled** and **charging capped at 80
 
 ## Detection & response
 
-- **[Uptime Kuma](../services/management/uptime-kuma.md)**: 43 monitors, with alerts to Discord (primary) and email
+- **[Uptime Kuma](../services/management/uptime-kuma.md)**: 42 monitors, with alerts to Discord (primary) and email
 - **[Self-healing](../services/automation/self-healing.md)**: Kuma alerts go to a headless Claude run that can use only an allowlisted set of fixes
 - **Weekly health audit**: SMART (ATA + NVMe wear), ZFS health and scrub age, GPU temperature and Xid errors, backup freshness, and a check that every running guest has at least one Kuma monitor
 - **Mail relay** on both nodes, so vzdump and system alerts actually get delivered
