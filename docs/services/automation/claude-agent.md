@@ -32,7 +32,7 @@ Every session ends with a log entry: what changed, why, what was tried and faile
 - The vault syncs nightly to a private GitHub repo and to Obsidian on the desktops.
 - Future sessions **search the vault before claiming not to know something**, which is what makes it memory and not an archive.
 
-This replaced a self-hosted Wiki.js in May 2026. The wiki still runs read-only as an archive of older entries.
+This replaced a self-hosted Wiki.js, which stopped taking writes in May 2026 and was decommissioned in September 2026 after every page was confirmed to be in the vault.
 
 ## Scheduled automations
 
@@ -52,7 +52,6 @@ The weekly audit's first run found that the cluster had **no backups at all**. T
 | Self-heal receiver | Takes Uptime Kuma webhooks and starts incident response. See [Self-Healing](self-healing.md) |
 | Discord bot | [Byte](discord-bot.md): the agent, reachable from Discord |
 | Jarvis gateway | The "brain" API behind the [Jarvis HUD](jarvis-hud.md) (agent runs + text-to-speech) |
-| Wiki.js | Legacy wiki, read-only archive |
 
 ## Budget watchdog
 

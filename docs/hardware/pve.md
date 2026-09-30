@@ -33,7 +33,7 @@ A single-partition ZFS pool that holds every LXC rootfs and VM disk on this node
 |---|---|---|---|
 | CT 100 | adguard | LXC | DNS, ad blocking, internal rewrites |
 | CT 101 | nextcloud | LXC | Nextcloud AIO (GPU enabled) |
-| CT 102 | claude | LXC | Claude Code agent, automation services, legacy wiki |
+| CT 102 | claude | LXC | Claude Code agent + automation services |
 | CT 103 | jellyfin | LXC | Jellyfin, Jellyseerr, Jellystat (GPU enabled) |
 | CT 104 | immich | LXC | Immich + GPU speech-to-text for voice agents (GPU enabled) |
 | CT 105 | guacamole | LXC | Apache Guacamole (browser RDP/VNC) |
