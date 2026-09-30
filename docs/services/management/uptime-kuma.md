@@ -8,7 +8,7 @@ Service uptime monitoring and alerting. It watches every running service in the 
 - **Port:** 3001
 - **Image:** `louislam/uptime-kuma:1`
 - **Compose location:** `/opt/uptime-kuma/docker-compose.yml`
-- **Monitors:** 41, all active
+- **Monitors:** 42, all active
 
 ## Alerting
 
