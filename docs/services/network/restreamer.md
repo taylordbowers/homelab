@@ -8,7 +8,8 @@ Self-hosted live-streaming relay. Accepts RTMP ingest, transcodes, and republish
 - **Image:** `datarhei/restreamer:latest`
 - **Ports:**
     - **1935** — RTMP ingest (e.g. OBS)
-    - **8080** — Web UI / HLS output
+    - **8080**: Web UI / HLS output
+- **Status:** deployed, used occasionally
 
 ## Docker Compose
 

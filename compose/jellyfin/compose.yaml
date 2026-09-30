@@ -15,10 +15,12 @@ services:
       - /data:/data
     ports:
       - "8096:8096"
+      - "7359:7359/udp"   # client auto-discovery
+      - "1900:1900/udp"   # DLNA
     restart: unless-stopped
 
   jellyseerr:
-    image: fallenbagel/jellyseerr:latest
+    image: seerr/seerr:latest
     container_name: jellyseerr
     environment:
       - TZ=America/Chicago

@@ -2,60 +2,78 @@
 
 ## Topology
 
-Flat `/24` home network. All devices on `10.0.0.0/24`. AdGuard Home handles DNS for the whole network.
+It's a flat `/24` home network behind the ISP's gateway, with no VLANs. Addresses on this site are placeholders (`10.0.0.x`).
 
 ```mermaid
 graph TD
-    ISP["ISP"] --> Router["Router\n10.0.0.254"]
-    Router --> PVE1["pve-guide\n10.0.0.1"]
-    Router --> PVE2["pve2\n10.0.0.2"]
-    Router --> Devices["Other Devices"]
-    PVE1 --> AG["AdGuard Home\nDNS: port 53"]
-    AG -->|upstream| DNS["Cloudflare 1.1.1.1\nGoogle 8.8.8.8"]
-    PVE1 --> NPM["Nginx Proxy Manager\n10.0.0.11"]
-    NPM -->|SSL proxy| Services["Internal Services"]
-    CF["Cloudflare\ntaylorsfunlab.com"] -->|DDNS| Router
-    NPM -->|Let's Encrypt\nDNS challenge| CF
+    ISP["ISP"] --> Router["ISP gateway\n10.0.0.254\n(DHCP)"]
+    Router --> PVE["pve\n10.0.0.3"]
+    Router --> GUIDE["pve-guide\n10.0.0.1"]
+    Router --> Devices["Other devices"]
+    PVE --> AG["AdGuard Home\n10.0.0.5 · DNS :53"]
+    AG -->|upstream| DNS["Cloudflare 1.1.1.1"]
+    GUIDE --> NPM["Nginx Proxy Manager\n10.0.0.11"]
+    NPM -->|TLS proxy| Services["Internal services"]
+    CF["Cloudflare DNS\ntaylorsfunlab.com"] -->|DDNS| Router
+    NPM -->|Let's Encrypt\nDNS-01 challenge| CF
+    TS["Tailscale tailnet"] -->|subnet route + exit node| PVE
 ```
 
-## DNS — AdGuard Home
+## DNS: AdGuard Home
 
-- **Container:** CT 100 on pve-guide
+- **Container:** CT 100 on `pve`
 - **DNS port:** 53
-- **Web UI:** port 6060
-- **Upstream DNS:** Cloudflare (1.1.1.1) + Google (8.8.8.8)
-- **Function:** Network-wide ad and tracker blocking
+- **Web UI:** port 80
+- **Upstream DNS:** Cloudflare (1.1.1.1)
+- **Jobs:** ad and tracker blocking, plus **DNS rewrites** that point internal hostnames at NPM, so LAN-only services never need a public DNS record
 
-All devices on the network use AdGuard as their DNS server (set via router DHCP).
+!!! note "Who actually uses AdGuard"
+    The ISP gateway won't let its DHCP hand out a custom DNS server, so ordinary clients use the gateway's resolver by default. Every **server** guest is configured with AdGuard as its primary resolver and the gateway as a fallback. That way internal names resolve, and a DNS outage on CT 100 doesn't take the lab down with it. Moving DHCP onto AdGuard would bring the rest of the house under it.
 
-## Reverse Proxy — Nginx Proxy Manager
+## Reverse Proxy: Nginx Proxy Manager
 
 - **Container:** CT 121 (portainer LXC) on pve-guide
 - **IP:** 10.0.0.11
 
-Handles all external access to services via `taylorsfunlab.com` subdomains. Wildcard SSL certificate (`*.taylorsfunlab.com`) issued via Let's Encrypt with Cloudflare DNS challenge — no ports exposed to the internet except 80/443.
+NPM terminates TLS for every web service with a wildcard certificate (`*.taylorsfunlab.com`) issued by Let's Encrypt through Cloudflare's DNS-01 challenge. Only ports 80 and 443 are forwarded from the internet.
 
 ### Proxy Hosts
 
-NPM fronts the internal services that need TLS — dashboards, the cloud suite, the *arr stack admin UIs, and the hypervisor UI. Backends and exact hostnames are kept private.
+NPM fronts the internal services that need TLS: dashboards, the cloud suite, the *arr admin UIs, the hypervisor UI, and the Jarvis HUD (which needs HTTPS for browser mic access). The exact hostnames and backends aren't published.
 
-## Dynamic DNS — Cloudflare
+### Public vs LAN-only
 
-Cloudflare DDNS container runs in the portainer LXC and keeps the `taylorsfunlab.com` A record pointed at the home IP. Updates automatically when the IP changes.
+Only services meant to be reachable from outside have public DNS records. Everything else resolves through an AdGuard rewrite on the LAN. A July 2026 audit removed public records that had pointed at private IPs.
 
-## VPN — Gluetun
+## Dynamic DNS: Cloudflare
 
-All download traffic on the mediaServer VM is routed through a VPN via Gluetun. qBittorrent, NZBGet, and Prowlarr run with `network_mode: service:gluetun` — they have no direct internet access and cannot leak traffic if the VPN drops.
+A Cloudflare DDNS container on CT 121 keeps the apex A record pointed at the home IP.
 
-## Static IPs
+## Remote Access: Tailscale
 
-Most containers use DHCP but the following have consistent IPs (either static or DHCP reservation):
+`pve` runs Tailscale as a **subnet router** (advertising the LAN) and an **exit node**, so the whole lab is reachable from anywhere without opening extra ports. See [Tailscale](../services/network/tailscale.md).
 
-| Host | IP | Notes |
+## VPN: Gluetun
+
+All download traffic on the mediaServer VM goes through a commercial VPN via Gluetun. qBittorrent, NZBGet, and Prowlarr run with `network_mode: service:gluetun`, so they have no direct internet access and can't leak traffic if the VPN drops.
+
+## Fixed IPs
+
+Every server guest has a fixed address: a static IP in the LXC config, or a pinned lease for the VMs. They were all re-pinned after the September 2026 move to a new ISP gateway. Critical LXCs (including the Claude agent in CT 102) use static configs so they don't depend on DHCP at boot.
+
+| Host | IP | Type |
 |---|---|---|
 | pve-guide | 10.0.0.1 | Static |
-| pve2 | 10.0.0.2 | Static |
-| portainer CT | 10.0.0.11 | DHCP reservation |
+| pve | 10.0.0.3 | Static |
+| adguard CT | 10.0.0.5 | Static |
+| mediaServer VM | 10.0.0.10 | Pinned lease |
+| portainer CT | 10.0.0.11 | Static |
+| nextcloud CT | 10.0.0.12 | Static |
+| claude CT | 10.0.0.13 | Static |
+| jellyfin CT | 10.0.0.14 | Static |
+| immich CT | 10.0.0.15 | Static |
+| guacamole CT | 10.0.0.16 | Static |
+| amp-gameserver VM | 10.0.0.17 | Pinned lease |
+| windows11 VM | 10.0.0.18 | Pinned lease |
+| jarvis CT | 10.0.0.19 | Static |
 | media CT | 10.0.0.20 | Static |
-| nextcloud CT | 10.0.0.12 | DHCP reservation |
-| mediaServer VM | 10.0.0.10 | DHCP reservation |

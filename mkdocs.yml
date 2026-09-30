@@ -1,5 +1,5 @@
 site_name: Taylor's Homelab
-site_description: A two-node Proxmox homelab running media, cloud, gaming, and self-hosted services.
+site_description: A Proxmox homelab running media, cloud, gaming, AI-assisted operations, and self-hosted services.
 site_url: https://taylordbowers.github.io/homelab
 repo_url: https://github.com/taylordbowers/homelab
 repo_name: taylordbowers/homelab
@@ -59,13 +59,15 @@ nav:
   - Home: index.md
   - Hardware:
     - Overview: hardware/index.md
-    - pve-guide (Node 1): hardware/pve-guide.md
-    - pve2 (Node 2): hardware/pve2.md
+    - pve (Primary Node): hardware/pve.md
+    - pve-guide (Storage Node): hardware/pve-guide.md
     - Windows 11 VM: hardware/win11-vm.md
   - Infrastructure:
     - Storage: infrastructure/storage.md
+    - Backups: infrastructure/backups.md
     - Network: infrastructure/network.md
     - GPU Passthrough: infrastructure/gpu-passthrough.md
+    - Power & Resilience: infrastructure/power.md
   - Services:
     - Media:
       - Jellyfin: services/media/jellyfin.md
@@ -77,6 +79,7 @@ nav:
       - AdGuard Home: services/network/adguard.md
       - Nginx Proxy Manager: services/network/nginx-proxy-manager.md
       - Cloudflare DDNS: services/network/cloudflare-ddns.md
+      - Tailscale: services/network/tailscale.md
       - Restreamer: services/network/restreamer.md
     - Management:
       - Proxmox: services/management/proxmox.md
@@ -88,5 +91,9 @@ nav:
     - Gaming:
       - Crafty Controller: services/gaming/crafty.md
       - AMP Game Server: services/gaming/amp.md
-    - Automation:
-      - Trading Bot: services/automation/trading-bot.md
+    - AI & Automation:
+      - Claude Code Agent: services/automation/claude-agent.md
+      - Self-Healing: services/automation/self-healing.md
+      - Byte (Discord Agent): services/automation/discord-bot.md
+      - Jarvis HUD: services/automation/jarvis-hud.md
+      - Trading Bots: services/automation/trading-bot.md

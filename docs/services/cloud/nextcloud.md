@@ -4,8 +4,10 @@ Full self-hosted cloud suite — file storage, calendar, contacts, document edit
 
 ## Setup
 
-- **Host:** nextcloud LXC (CT 101) on pve2
+- **Host:** nextcloud LXC (CT 101) on `pve`
 - **IP:** 10.0.0.12
+- **Container:** unprivileged LXC, Ubuntu 22.04, 3 cores / 4GB RAM, 40GB rootfs on `flash` (NVMe)
+- **GPU:** RTX A3000 device nodes passed through (not actively used yet)
 - **External access:** behind Nginx Proxy Manager with TLS
 - **Install type:** Nextcloud All-in-One (AIO) via Docker
 
@@ -29,7 +31,10 @@ Nextcloud AIO manages its own container stack internally. All containers are dep
 
 ## Data Storage
 
-Nextcloud data is stored on the `tank_new` RAIDZ1 array via a bind mount from the host (`/mnt/data → /data` inside the LXC). The LXC rootfs is on `flash` (40GB).
+User data lives on pve-guide's `tank_new` RAIDZ1 array. The `pve` host mounts the dataset over NFS at `/mnt/data`, and it's bind-mounted into the LXC as `/data`. The LXC rootfs and the AIO Docker volumes (database, config) are on `pve`'s `flash` pool.
+
+!!! note
+    Because data comes over NFS from the other node, pve-guide must be up for Nextcloud to serve files. The rootfs (including the database) is covered by the nightly vzdump backup. The user data on the array is not (see [Backups](../../infrastructure/backups.md#whats-excluded)).
 
 ## Deployment
 

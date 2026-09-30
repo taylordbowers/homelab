@@ -20,11 +20,12 @@ Automated media management stack running on the mediaServer VM (ID 119). All dow
 
 ## Host
 
-- **VM:** mediaServer (ID 119) on pve-guide
+- **VM:** mediaServer (ID 119) on `pve`
 - **OS:** Ubuntu 24.04 LTS
-- **IP:** 10.0.0.10
-- **Resources:** 4 cores, 12GB RAM, 64GB SSD (OS)
-- **Data mount:** `//10.0.0.20/data` (22TB, SMB from media LXC)
+- **IP:** 10.0.0.10 (pinned lease)
+- **Resources:** 4 cores, 12GB RAM, 64GB disk on `flash` (NVMe)
+- **Data mount:** `//10.0.0.20/data` (22TB, SMB from the media LXC on pve-guide)
+- **GPU:** none. It used to have pve-guide's Intel iGPU passed through, which was dropped when the VM moved to `pve` in July 2026. Nothing in this stack transcodes
 - **Compose file:** `/docker/servarr/compose.yaml`
 
 ## VPN Architecture
@@ -42,13 +43,13 @@ graph LR
     LI["Lidarr"] -->|direct| Internet
 ```
 
-qBittorrent, NZBGet, and Prowlarr use `network_mode: service:gluetun` — they share the VPN container's network and have no internet access if the VPN drops. Sonarr, Radarr, and Lidarr connect directly (metadata only, no downloads).
+qBittorrent, NZBGet, and Prowlarr use `network_mode: service:gluetun`, so they share the VPN container's network and have no internet access if the VPN drops. Sonarr, Radarr, Lidarr, Bazarr, Profilarr, and Sportarr connect directly (metadata only, no downloads).
 
 Deunhealth monitors qBittorrent and automatically restarts it if it becomes unhealthy (e.g. VPN reconnect causes it to stall).
 
 ## Docker Compose
 
-See the full compose file in the [compose directory](../../../compose/arr-stack/).
+An annotated version of the compose file is in the [compose directory](https://github.com/taylordbowers/homelab/tree/main/compose/arr-stack).
 
 Key networking setup:
 

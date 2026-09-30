@@ -1,57 +1,50 @@
-# Autonomous Trading Bot
+# Trading Bots
 
-A Claude-driven paper-trading bot that runs on a fixed market-hours schedule and self-manages its own strategy.
+Two research projects on LLM-assisted trading. Both run on **paper accounts** and are scheduled on the Claude agent's LXC (CT 102).
 
-!!! info "Paper account only"
-    The bot trades a paper account — no real capital is at risk. It exists primarily as a research project on autonomous LLM-driven decision making, not as a money-making vehicle.
+!!! info "Paper accounts only"
+    Both bots trade paper accounts, so no real capital is at risk. They're experiments in how far an LLM should be trusted in a decision loop, not money-makers.
 
-## Architecture at a glance
+## Maverick: equities
+
+### v1: the LLM as trader (Apr–Jun 2026)
+
+The first version had a headless Claude session as the **decision layer**. Cron started it five times per trading day, it read the portfolio, a screener, and its own memory files, and it placed trades through a tool layer with hard code-enforced guardrails (no shorts, no margin, mandatory stops, cash buffer). It even rewrote its own soft strategy rules every week.
+
+**What happened:** it was fascinating to watch and consistently **lagged the S&P 500**. The LLM's picks lost more on losers than they made on winners, and two rounds of rule tuning didn't close the gap.
+
+### v2: the LLM as analyst (Jun 2026 →)
+
+The rebuild flipped the roles:
 
 ```mermaid
 graph TD
-    Cron["System cron<br/>(weekday market hours)"] -->|spawns headless| Claude["Claude Opus<br/>(headless `claude -p`)"]
-    Claude -->|reads| Tools["Tool Layer<br/>portfolio, screener,<br/>market_data, execute"]
-    Claude -->|reads| Memory["Bot Memory<br/>strategy.md, lessons.md,<br/>watchlist, theses"]
-    Tools -->|REST| Broker["Paper-trading<br/>broker API"]
-    Tools -->|prices| MarketData["Market data<br/>provider"]
-    Claude -->|writes| Memory
-    Claude -->|emails| User["📧 Daily summary<br/>+ weekly recap"]
+    Cron["System cron\n(5 sessions / weekday)"] --> Engine["Deterministic engine\n(Python rules)"]
+    Engine -->|entries, exits,\nstops, rebalances| Broker["Paper broker API"]
+    LLM["Claude\n(once-daily review)"] -->|market posture only| Engine
+    Engine --> Report["Email summary"]
+    Engine -->|heartbeat| Kuma["Uptime Kuma\npush monitor"]
 ```
 
-## How it works
+- **Coded rules** handle entries, sizing, stops, trailing exits, and a monthly momentum rebalance. Rules were back-tested before adoption with a pre-registered pass/fail test, and a config that failed its test wasn't shipped.
+- **The LLM is an analyst.** A once-daily call sets a market posture. It doesn't pick trades.
+- **Dead-man's switch:** every session pushes a heartbeat to Uptime Kuma, so a job that silently stops running raises an alert.
 
-The bot is **not** a hardcoded algorithm. It's a sequence of constraints + tools, with the LLM as the decision layer:
+## nancy: options
 
-1. **System cron** fires at fixed times during the trading day (pre-market, open, midday, pre-close, post-market — 5 sessions Mon–Fri).
-2. Each tick spawns a **headless Claude Opus** that reads a session-specific protocol file.
-3. Claude pulls the current portfolio + watchlist + market data via a **tool layer** (Python scripts under `~/trading/tools/`).
-4. It then reasons about positions and either holds, opens, or closes — subject to **hard guardrails** (no shorts, no margin, must-set-stop, ≥2% cash buffer, no duplicates).
-5. Trades go through a **paper-trading broker API**.
-6. After the close, an email summary lands in the operator's inbox.
+A second, independent bot for **options premium-selling** research, with its own paper account and an always-on risk daemon. Lanes are switched on and off one at a time as experiments. A 0DTE lane was halted after a poor run, and a simpler put-write lane is now live. The same principles apply: coded risk limits, and the LLM only as an analyst writing a daily narrative.
 
-## Self-management
+## Lessons
 
-A unique design choice: the bot owns its own strategy. The file `strategy.md` (sizing, position count, stop policy, hold times, sector mix) is **revised by the bot itself once a week** based on what worked and what didn't. The hard guardrails above are enforced in code and *not* up for negotiation, but everything else is.
-
-This means:
-
-- Every Friday, a longer "weekly self-review" session runs.
-- The bot reads its trade log, P&L, and `lessons.md`, then proposes rule changes to its own `strategy.md`.
-- The next week trades against the updated rules.
+- **An LLM as the trader underperformed an index fund.** An LLM as a reviewer on top of coded rules is much easier to reason about and test.
+- **Silent failures are worse than loud ones.** Any error path that logs "market closed" and exits cleanly looks exactly like a normal quiet day. Session logs are checked for a positive "ran live" marker, not just the absence of errors.
+- **There's no dry-run against a live broker.** Test order-path code with invalid inputs, never with real held positions.
 
 ## What's intentionally not in this doc
 
-- The specific strategy class, parameters, signals, or position sizing logic
-- Performance numbers, equity curve, or P&L
-- Broker name, account details, or API references
+- The specific strategies, parameters, signals, or sizing logic
+- Performance numbers, equity curves, or P&L
+- Broker names, account details, or API references
 - Locations of secrets, config, or tools
 
-These are kept off the public site by design. The interesting part of this project is the *architecture* (LLM-as-decision-layer with hard guardrails + self-revising soft rules), not anything specific to the strategy.
-
-## Stack
-
-- **Orchestrator:** system cron on a Proxmox LXC
-- **Brain:** headless Claude Opus invocations
-- **Tool layer:** small Python scripts under `~/trading/tools/`
-- **State:** plain Markdown files under `~/trading/memory/` (LLM-readable, version-controllable, diff-able)
-- **Notifications:** email via local Postfix → Gmail SMTP relay
+The interesting part is the architecture and what didn't work, not the strategy.

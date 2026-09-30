@@ -1,6 +1,6 @@
 # *arr Stack Compose
 
-Standard *arr layout with all download clients (qBittorrent, NZBGet, Prowlarr) routed through Gluetun. Indexer-only services (Sonarr, Radarr, Lidarr) sit on a separate Docker bridge so they keep working if the VPN drops.
+Standard *arr layout with all download clients (qBittorrent, NZBGet, Prowlarr) routed through Gluetun. Metadata-only services (Sonarr, Radarr, Lidarr, Bazarr) sit on a separate Docker bridge so they keep working if the VPN drops.
 
 Key shape:
 
