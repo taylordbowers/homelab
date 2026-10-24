@@ -4,7 +4,7 @@ Reverse proxy with a web UI for managing proxy hosts and SSL certificates.
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
+- **Host:** portainer LXC (CT 121) on pve, `10.0.0.11`
 - **Admin UI:** port 81
 - **HTTP:** port 80
 - **HTTPS:** port 443

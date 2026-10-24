@@ -4,7 +4,7 @@ Homelab dashboard — shows all services, system stats, and quick links in one p
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
+- **Host:** portainer LXC (CT 121) on pve, `10.0.0.11`
 - **Port:** 7575
 - **External access:** behind Nginx Proxy Manager with TLS
 - **Image:** `ghcr.io/homarr-labs/homarr:latest`

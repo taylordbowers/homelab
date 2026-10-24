@@ -59,8 +59,8 @@ nav:
   - Home: index.md
   - Hardware:
     - Overview: hardware/index.md
-    - pve (Primary Node): hardware/pve.md
-    - pve-guide (Storage Node): hardware/pve-guide.md
+    - pve (The Node): hardware/pve.md
+    - pve-guide (Retired): hardware/pve-guide.md
     - Windows 11 VM: hardware/win11-vm.md
   - Infrastructure:
     - Storage: infrastructure/storage.md

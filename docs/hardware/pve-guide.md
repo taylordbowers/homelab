@@ -1,11 +1,22 @@
-# pve-guide — Storage Node
+# pve-guide — Retired Storage Node
 
-**Storage node.** This is the original homelab server. It now mainly holds the 4-drive RAIDZ1 array, serves it over NFS and SMB, receives the nightly backups, and runs the two containers that mount the array directly.
+**Retired.** This is the original homelab server. Until October 2026 it held the 4-drive RAIDZ1 array, served it to the laptop over NFS and SMB, received the nightly backups, and ran the two containers that mounted the array directly.
 
-!!! note "Retiring"
-    Everything that could move has been migrated to [pve](pve.md). CT 121 and CT 200 stay here because they mount `tank_new` directly. They'll move once the array has a new home, such as a DAS or HBA enclosure on `pve`, and then this box can retire.
+!!! success "Powered off — 2026-10-24"
+    The four array drives moved into the 10-inch rack on [pve](pve.md). CT 121 (portainer) and CT 200 (media) moved with them. Every NFS consumer was switched to a local mount, and this box was powered off. It stays a cluster member for a few days as a rollback path, and then it's removed from the cluster.
 
-## Specs
+## How the move was done
+
+1. **Prep without downtime.** An M.2→SATA card went into the laptop. A safety copy of the photo library went onto the laptop's NVMe, so the array wasn't the only copy during the move. The two containers' root disks were pre-copied with `zfs send` while they ran. A fresh scrub and SMART check ran the night before. An automated check emailed "ready" once every step had passed.
+2. **The window (~1 hour).** Stop the guests that use the array. Send a final incremental copy of the container disks. Then `zpool export` here, move the drives, `zpool import` on `pve`, and repoint the Proxmox storage config.
+3. **Rewire.** Nextcloud and Immich went from NFS to bind mounts. The game-server VM's data moved onto its own disk. The backup job went from NFS to the local dataset. The NFS server was removed.
+
+!!! tip "Lessons"
+    - `zfs send` needs `-p` for container disks. Without it, the dataset properties Proxmox relies on (`acltype=posix`, `xattr=sa`) don't come across.
+    - With two nodes and one powered off, the survivor has no quorum. Proxmox won't start any guests after a reboot until `pvecm expected 1` is run.
+    - Bay and port order don't matter to ZFS. Label the caddies with drive serials anyway, so a failed disk can be found later.
+
+## Specs (for the record)
 
 | Component | Detail |
 |---|---|
@@ -14,40 +25,8 @@
 | **GPU** | Intel HD Graphics P4600 (iGPU, unused) |
 | **OS Disk** | 500GB HDD → Proxmox root (LVM) |
 | **Flash Pool** | 1TB HDD → `flash` ZFS (single disk; the name is historical) |
-| **Bulk Pool** | 4x 8TB WD Red Plus → `tank_new` RAIDZ1 (~21TB usable) |
 | **Proxmox** | VE 8.4 (Debian 12) |
 
-## ZFS Pools
+## What's next
 
-### `tank_new`: RAIDZ1 bulk pool
-Four 8TB WD Red Plus drives in RAIDZ1, which survives a single drive failure. It's about a third full. A monthly scrub runs through the standard ZFS timer, and the last one found 0 errors.
-
-| Dataset | Used for |
-|---|---|
-| `subvol-200-disk-0` | Media, photos, Nextcloud data, game-server data. Mounted at `/data` in CT 200 and CT 121, NFS-exported to `pve` |
-| `backup` | Nightly vzdump archives for **both** nodes (see [Backups](../infrastructure/backups.md)) |
-
-### `flash`: single-disk pool
-Rootfs for CT 121 and CT 200. Despite the name, it's a spinning disk.
-
-## Exports
-
-| Export | Protocol | Consumer |
-|---|---|---|
-| `tank_new/subvol-200-disk-0` | NFS | `pve` host (→ Nextcloud CT 101 bind mount) |
-| `tank_new/subvol-200-disk-0/immich` | NFS | Immich (CT 104) |
-| `tank_new/backup` | NFS | `pve` vzdump target |
-| `/data` (from CT 200) | SMB | Jellyfin (CT 103), mediaServer (VM 119) |
-
-## Containers
-
-| ID | Name | Type | Role |
-|---|---|---|---|
-| CT 121 | portainer | LXC | Docker host for NPM, Uptime Kuma, Homarr, Crafty, Restreamer, Cloudflare DDNS, Portainer |
-| CT 200 | media | LXC | Samba file server for the 22TB `/data` dataset |
-
-## Host services
-
-- **Filebrowser**: host-level file manager on port 8085
-- **NFS server**: exports listed above
-- **Postfix → Gmail relay**: backup-failure and system alerts
+The plan is to wipe it and rebuild it as an **off-site Proxmox Backup Server** at a family member's house, with a new mirrored pair of drives. It would hold the first copy of the lab outside the house. See [Backups → Roadmap](../infrastructure/backups.md#roadmap).

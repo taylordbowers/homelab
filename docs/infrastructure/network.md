@@ -8,11 +8,10 @@ It's a flat `/24` home network behind the ISP's gateway, with no VLANs. Addresse
 graph TD
     ISP["ISP"] --> Router["ISP gateway\n10.0.0.254\n(DHCP)"]
     Router --> PVE["pve\n10.0.0.3"]
-    Router --> GUIDE["pve-guide\n10.0.0.1"]
     Router --> Devices["Other devices"]
     PVE --> AG["AdGuard Home\n10.0.0.5 · DNS :53"]
     AG -->|upstream| DNS["Cloudflare 1.1.1.1"]
-    GUIDE --> NPM["Nginx Proxy Manager\n10.0.0.11"]
+    PVE --> NPM["Nginx Proxy Manager\n10.0.0.11"]
     NPM -->|TLS proxy| Services["Internal services"]
     CF["Cloudflare DNS\ntaylorsfunlab.com"] -->|DDNS| Router
     NPM -->|Let's Encrypt\nDNS-01 challenge| CF
@@ -32,7 +31,7 @@ graph TD
 
 ## Reverse Proxy: Nginx Proxy Manager
 
-- **Container:** CT 121 (portainer LXC) on pve-guide
+- **Container:** CT 121 (portainer LXC) on `pve`
 - **IP:** 10.0.0.11
 
 NPM terminates TLS for every web service with a wildcard certificate (`*.taylorsfunlab.com`) issued by Let's Encrypt through Cloudflare's DNS-01 challenge. Only ports 80 and 443 are forwarded from the internet.
@@ -63,7 +62,7 @@ Every server guest has a fixed address: a static IP in the LXC config, or a pinn
 
 | Host | IP | Type |
 |---|---|---|
-| pve-guide | 10.0.0.1 | Static |
+| pve-guide (powered off) | 10.0.0.1 | Static |
 | pve | 10.0.0.3 | Static |
 | adguard CT | 10.0.0.5 | Static |
 | mediaServer VM | 10.0.0.10 | Pinned lease |

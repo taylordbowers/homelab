@@ -1,17 +1,17 @@
 # Taylor's Homelab
 
-A two-node Proxmox VE cluster running a full self-hosted stack: media, photos, cloud storage, game servers, and a layer of AI-assisted operations (an in-cluster Claude Code agent that monitors, heals, and documents the lab). It's built on the idea of owning your own data and services.
+A single-node Proxmox VE homelab running a full self-hosted stack: media, photos, cloud storage, game servers, and a layer of AI-assisted operations (an in-cluster Claude Code agent that monitors, heals, and documents the lab). It's built on the idea of owning your own data and services.
 
-!!! info "Current layout (since mid-2026)"
-    The cluster was rebuilt around a laptop. **`pve`** (an i9 mobile workstation with an RTX A3000) now runs almost every workload. **`pve-guide`** (the original Xeon server) holds the 4-drive RAIDZ1 array, the backups, and the containers tied to that array. The old GPU node, `pve2`, was decommissioned in July 2026. See [Hardware](hardware/index.md) for the history.
+!!! info "Current layout (since October 2026)"
+    The lab now runs on a single laptop. **`pve`** (an i9 mobile workstation with an RTX A3000) runs every workload, with the 4-drive RAIDZ1 array in a 10-inch rack beside it on an M.2→SATA card. The original Xeon server, `pve-guide`, handed its drives over and was powered off in October 2026. The old GPU node, `pve2`, was decommissioned in July 2026. See [Hardware](hardware/index.md) for the history.
 
 ## Cluster Overview
 
 ```mermaid
 graph TD
     Internet["🌐 Internet"] -->|Cloudflare DNS| Router["🔀 ISP Gateway\n10.0.0.254"]
-    Router --> PVE["🖥️ pve (primary)\n10.0.0.3\ni9-11950H / 64GB / RTX A3000"]
-    Router --> GUIDE["🗄️ pve-guide (storage)\n10.0.0.1\nXeon E3-1245 v3 / 32GB / 4x8TB RAIDZ1"]
+    Router --> PVE["🖥️ pve\n10.0.0.3\ni9-11950H / 64GB / RTX A3000"]
+    PVE --- TANK["🗄️ tank_new\n4x 8TB RAIDZ1\n(rack bays, ASM1166)"]
 
     PVE --> AG["AdGuard Home\nCT 100"]
     PVE --> NC["Nextcloud AIO\nCT 101"]
@@ -24,21 +24,20 @@ graph TD
     PVE --> AMP["AMP VM 300"]
     PVE --> WIN["Windows 11 VM 301"]
 
-    GUIDE --> MEDIA["media CT 200\nSMB file server"]
-    GUIDE --> PORT["portainer CT 121\nNPM · Kuma · Homarr · Crafty"]
-    GUIDE -->|NFS: media, photos, backups| PVE
+    PVE --> MEDIA["media CT 200\nSMB file server"]
+    PVE --> PORT["portainer CT 121\nNPM · Kuma · Homarr · Crafty"]
 ```
 
 ## Quick Reference
 
 | Service | Host | Node |
 |---|---|---|
-| Proxmox UI | both nodes (port 8006) | pve, pve-guide |
-| Dashboard (Homarr) | portainer CT (CT 121) | pve-guide |
-| Uptime Kuma | portainer CT (CT 121) | pve-guide |
-| Nginx Proxy Manager | portainer CT (CT 121) | pve-guide |
-| Crafty | portainer CT (CT 121) | pve-guide |
-| Media file server (SMB) | media CT (CT 200) | pve-guide |
+| Proxmox UI | host (port 8006) | pve |
+| Dashboard (Homarr) | portainer CT (CT 121) | pve |
+| Uptime Kuma | portainer CT (CT 121) | pve |
+| Nginx Proxy Manager | portainer CT (CT 121) | pve |
+| Crafty | portainer CT (CT 121) | pve |
+| Media file server (SMB) | media CT (CT 200) | pve |
 | AdGuard | adguard CT (CT 100) | pve |
 | Nextcloud | nextcloud CT (CT 101) | pve |
 | Claude Code agent | claude CT (CT 102) | pve |
@@ -59,7 +58,7 @@ Addresses on this site are placeholders (`10.0.0.x`). They don't match the real 
 | Host | IP |
 |---|---|
 | ISP gateway | 10.0.0.254 |
-| pve-guide | 10.0.0.1 |
+| pve-guide (powered off) | 10.0.0.1 |
 | pve | 10.0.0.3 |
 | adguard CT (100) | 10.0.0.5 |
 | mediaServer VM (119) | 10.0.0.10 |
@@ -100,11 +99,11 @@ Addresses on this site are placeholders (`10.0.0.x`). They don't match the real 
 - **Tailscale**: remote access (subnet router + exit node)
 
 ### Monitoring & Management
-- **Proxmox VE**: hypervisor cluster
+- **Proxmox VE**: hypervisor
 - **Portainer**: Docker container management
 - **Homarr**: homelab dashboard
-- **Uptime Kuma**: 42 monitors, with alerts to Discord and email that feed the self-healing pipeline
-- **Filebrowser**: host-level filesystem access on each node
+- **Uptime Kuma**: 37 active monitors, with alerts to Discord and email that feed the self-healing pipeline
+- **Filebrowser**: host-level filesystem access
 - **Apache Guacamole**: browser-based RDP/VNC gateway
 - **Nightly vzdump backups** of every guest (see [Backups](infrastructure/backups.md))
 

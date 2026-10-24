@@ -27,11 +27,11 @@ graph LR
 Seven approved actions, each backed by a runbook:
 
 1. Restart Jellyfin (CT 103)
-2. Remount Immich's NFS share (CT 104)
+2. ~~Remount Immich's NFS share (CT 104)~~ retired in October 2026, when Immich moved to a bind mount of the local pool and there was nothing left to remount
 3. Restart Immich's services (CT 104)
 4. `docker restart` of specific named containers on the infrastructure LXC (CT 121)
 5. Restart Tailscale
-6. Restart Filebrowser on a node
+6. Restart Filebrowser on the host
 7. Restart AdGuard Home (CT 100)
 
 Each action runs at most once per incident.

@@ -4,11 +4,11 @@ Service uptime monitoring and alerting. It watches every running service in the 
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
+- **Host:** portainer LXC (CT 121) on pve, `10.0.0.11`
 - **Port:** 3001
 - **Image:** `louislam/uptime-kuma:1`
 - **Compose location:** `/opt/uptime-kuma/docker-compose.yml`
-- **Monitors:** 42, all active
+- **Monitors:** 40, 37 active (the 3 that watched the retired storage node are paused until it leaves the cluster)
 
 ## Alerting
 
@@ -70,4 +70,4 @@ volumes:
 - **Self-signed TLS endpoints** (Proxmox UI, Portainer, Crafty) need `ignoreTls: true`, or every check fails on cert validation.
 - **NPM-fronted services** that redirect need `301`/`302` in `accepted_statuscodes`, or `maxredirects: 0` so the redirect itself counts as up.
 - **Apps mounted at a path** (Guacamole at `/guacamole/`) need the full URL including the path, because `/` returns 404.
-- **Kuma lives on pve-guide.** When that node was offline during the house move, monitoring and push heartbeats were down with it. Moving CT 121 to `pve` is on the roadmap.
+- **Kuma used to live on pve-guide.** When that node was offline during the house move, monitoring and push heartbeats went down with it. CT 121 moved to `pve` in October 2026, so Kuma now shares a host with what it watches. An external heartbeat is still worth adding.

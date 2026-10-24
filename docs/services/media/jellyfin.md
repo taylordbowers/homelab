@@ -92,7 +92,7 @@ See [GPU Passthrough](../../infrastructure/gpu-passthrough.md) for the full LXC 
 
 | Mount | Source | Destination |
 |-------|--------|-------------|
-| Media files | `//10.0.0.20/data` (SMB from CT 200 on pve-guide) | `/data` |
+| Media files | `//10.0.0.20/data` (SMB from CT 200) | `/data` |
 
 The SMB share lives on the other node, so if CT 200 comes up late after a power event the mount can be missing at boot. An `ensure-data-mount.timer` inside the CT re-checks every couple of minutes and remounts when needed.
 

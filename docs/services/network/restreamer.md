@@ -4,7 +4,7 @@ Self-hosted live-streaming relay. Accepts RTMP ingest, transcodes, and republish
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
+- **Host:** portainer LXC (CT 121) on pve, `10.0.0.11`
 - **Image:** `datarhei/restreamer:latest`
 - **Ports:**
     - **1935** — RTMP ingest (e.g. OBS)

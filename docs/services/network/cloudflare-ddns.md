@@ -4,7 +4,7 @@ Keeps the `taylorsfunlab.com` DNS A record updated when the home IP changes.
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide
+- **Host:** portainer LXC (CT 121) on pve
 - **Records managed:** the apex domain only. Internal-only services have **no** public records; they resolve through AdGuard rewrites on the LAN
 - **Image:** `favonia/cloudflare-ddns:latest`
 

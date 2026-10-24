@@ -1,15 +1,10 @@
 # Backups
 
-Every guest on both nodes gets a nightly Proxmox `vzdump` backup to the RAIDZ1 array.
+Every guest gets a nightly Proxmox `vzdump` backup to the RAIDZ1 array.
 
-## Jobs
+## Job
 
-Two scheduled jobs, one per node, because each node writes to its own storage ID:
-
-| Node | Storage | Target |
-|---|---|---|
-| pve | `backup-nfs` (NFS) | `tank_new/backup` on pve-guide, over the network |
-| pve-guide | `backup` (dir) | `tank_new/backup`, local |
+One scheduled job covers every guest and writes to the `backup` storage, a directory on the local `tank_new/backup` dataset. Until October 2026 there were two jobs, one per node, and `pve`'s backups crossed the network over NFS. That ended when the array moved into `pve`.
 
 | Setting | Value |
 |---|---|
@@ -18,9 +13,9 @@ Two scheduled jobs, one per node, because each node writes to its own storage ID
 | Mode | Snapshot (no downtime) |
 | Compression | zstd |
 | Retention | 7 daily · 4 weekly · 3 monthly |
-| Alerts | Email on failure (Postfix → Gmail relay on each node) |
+| Alerts | Email on failure (Postfix → Gmail relay) |
 
-The full set is 13 guests and about 140GB per night after compression. `pve`'s guests end up on different physical disks in a different machine from where they run.
+The full set is 14 guests and about 140GB per night after compression. Backups land on different physical disks (the HDD array) from where the guests run (the NVMe pool), but they're **in the same machine** now. A fire, theft, or power-supply fault would take both. That's why the off-site copy below matters.
 
 ## What's excluded
 
@@ -43,4 +38,4 @@ The 22TB media dataset (`tank_new:subvol-200-disk-0`, mounted in CT 200 and CT 1
 
 ## Roadmap
 
-- **Off-site copy.** The plan is a Proxmox Backup Server at a family member's house, seeded on the LAN and then synced over Tailscale. It would be the first real protection for the media dataset.
+- **Off-site copy (top priority).** The plan is to turn the retired storage node into a Proxmox Backup Server at a family member's house, seeded on the LAN and then synced over Tailscale. It would be the first copy of the guests outside the house, and the first real protection for the media dataset.

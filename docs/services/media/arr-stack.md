@@ -24,7 +24,7 @@ Automated media management stack running on the mediaServer VM (ID 119). All dow
 - **OS:** Ubuntu 24.04 LTS
 - **IP:** 10.0.0.10 (pinned lease)
 - **Resources:** 4 cores, 12GB RAM, 64GB disk on `flash` (NVMe)
-- **Data mount:** `//10.0.0.20/data` (22TB, SMB from the media LXC on pve-guide)
+- **Data mount:** `//10.0.0.20/data` (22TB, SMB from the media LXC, CT 200)
 - **GPU:** none. It used to have pve-guide's Intel iGPU passed through, which was dropped when the VM moved to `pve` in July 2026. Nothing in this stack transcodes
 - **Compose file:** `/docker/servarr/compose.yaml`
 

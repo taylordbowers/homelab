@@ -4,7 +4,7 @@ Docker container management UI. Its LXC is also the lab's main Docker host for i
 
 ## Setup
 
-- **Host:** portainer LXC (CT 121) on pve-guide, `10.0.0.11`
+- **Host:** portainer LXC (CT 121) on pve, `10.0.0.11`
 - **Web UI:** port 9443 (HTTPS)
 - **Image:** `portainer/portainer-ce:lts`
 - **LXC:** unprivileged Ubuntu 22.04, 3 cores, 24GB RAM, 24GB rootfs
@@ -24,8 +24,8 @@ The portainer LXC runs these alongside Portainer:
 | Cloudflare DDNS | — | [Cloudflare DDNS](../network/cloudflare-ddns.md) |
 | A few small private web apps | — | not documented publicly |
 
-!!! note "Why this CT is still on pve-guide"
-    CT 121 mounts `tank_new` directly, so it can't move to `pve` until the array does. That makes it the lab's main single point of failure for now, because monitoring and the reverse proxy both live here.
+!!! note "Moved to pve in October 2026"
+    CT 121 mounts `tank_new` directly, so it couldn't leave pve-guide until the array did. It moved with the drives on 2026-10-24 and now runs on `pve` alongside everything else. It still hosts both monitoring and the reverse proxy, so it's worth keeping healthy.
 
 !!! warning "Backup gotcha"
     Docker's overlay2 storage means millions of small files, so this CT's nightly backup takes about 20 minutes. It once failed completely because host-owned files had been staged into the unprivileged CT. See [Backups → Lessons learned](../../infrastructure/backups.md#lessons-learned).

@@ -13,7 +13,7 @@ An in-cluster AI operator. [Claude Code](https://claude.com/claude-code) runs in
 ```mermaid
 graph LR
     Agent["Claude Code\nCT 102"] -->|MCP → Proxmox API token| PVE["Proxmox cluster API"]
-    Agent -->|SSH| Nodes["pve / pve-guide hosts"]
+    Agent -->|SSH| Nodes["pve host"]
     Nodes -->|pct exec / qm guest exec| Guests["All guests"]
     Agent -->|read/write| Vault["Obsidian vault\n(git → private GitHub)"]
     Agent -->|SMTP relay| Mail["Email reports"]

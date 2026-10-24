@@ -8,6 +8,7 @@ AMP (Application Management Panel) is a multi-game server manager that runs doze
 - **IP:** 10.0.0.17 (pinned lease)
 - **OS:** Ubuntu 24.04
 - **Resources:** 4 cores, 16GB RAM, 32GB disk on `flash` (NVMe)
+- **Instance data:** on the VM's own disk (`~amp/.ampdata/instances/`). Until October 2026 the game instances sat on an NFS share from the storage node. They moved local when the array came into `pve`, which also means they're in the nightly VM backup now.
 - **Web UI:** port 8080
 - **Status:** running, autostarts on boot
 - **Remote access:** joined to the Tailscale tailnet

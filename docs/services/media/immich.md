@@ -53,17 +53,18 @@ See [GPU Passthrough](../../infrastructure/gpu-passthrough.md) for full LXC conf
 
 ## Data Storage
 
-All photos and the database live on pve-guide's `tank_new` RAIDZ1 array over NFS. Only the application containers run on `pve`.
+All photos and the database live on the `tank_new` RAIDZ1 array, which sits in the same box as `pve`. Since October 2026 the container gets it as a Proxmox **bind mount** rather than over NFS from a second node.
 
 | Mount | Source | Destination |
 |-------|--------|-------------|
-| Uploads + DB | `10.0.0.1:/tank_new/subvol-200-disk-0/immich` (NFS) | `/data/immich` |
+| Uploads + DB | `/tank_new/subvol-200-disk-0/immich` (bind mount, `mp0`) | `/data/immich` |
+| Same path | (bind mount, `mp1`) | `/mnt/photos` |
 
 - `/data/immich/uploads`: photo library
 - `/data/immich/db`: Postgres data directory
 
 !!! warning "Empty library? Check the mount first"
-    If the NFS mount is missing at startup (for example, pve-guide booted after `pve`), Immich starts against an empty directory and looks like the whole library is gone. Check with `mountpoint /data/immich` before touching the app or the database. Remount, then restart the stack.
+    If the mount is missing, Immich starts against an empty directory and looks like the whole library is gone. Check with `mountpoint /data/immich` before touching the app or the database. With NFS this used to happen when the storage node booted late. The bind mount removed that race, but a missing mount (pool not imported, bad `mp0` line) shows up the same way.
 
 ## Key Config (.env)
 

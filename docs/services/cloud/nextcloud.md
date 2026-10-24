@@ -31,10 +31,10 @@ Nextcloud AIO manages its own container stack internally. All containers are dep
 
 ## Data Storage
 
-User data lives on pve-guide's `tank_new` RAIDZ1 array. The `pve` host mounts the dataset over NFS at `/mnt/data`, and it's bind-mounted into the LXC as `/data`. The LXC rootfs and the AIO Docker volumes (database, config) are on `pve`'s `flash` pool.
+User data lives on the `tank_new` RAIDZ1 array, which is local to `pve`. The dataset is bind-mounted straight into the LXC as `/data` (`mp0: /tank_new/subvol-200-disk-0`). Until October 2026 it came over NFS from the storage node. The LXC rootfs and the AIO Docker volumes (database, config) are on `pve`'s `flash` pool.
 
 !!! note
-    Because data comes over NFS from the other node, pve-guide must be up for Nextcloud to serve files. The rootfs (including the database) is covered by the nightly vzdump backup. The user data on the array is not (see [Backups](../../infrastructure/backups.md#whats-excluded)).
+    The data is local now, so Nextcloud no longer depends on a second node being up. The rootfs (including the database) is covered by the nightly vzdump backup. The user data on the array is not (see [Backups](../../infrastructure/backups.md#whats-excluded)).
 
 ## Deployment
 

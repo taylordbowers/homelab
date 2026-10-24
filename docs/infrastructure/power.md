@@ -23,25 +23,29 @@ A small watchdog on `pve` treats the laptop battery as a UPS:
 
 The laptop also has **lid-close and sleep disabled** and **charging capped at 80%** to spare the battery from being held at 100% around the clock.
 
-`pve-guide` has no battery. It relies on onboot autostart when power returns.
+The drive array has its own ATX power supply, which has **no** battery. If mains fails, the drives drop while the laptop keeps running, until the watchdog shuts it down. Putting the drive PSU on a small UPS is on the list.
+
+!!! warning "Check the charger after hardware work"
+    During the October 2026 drive install, the laptop's barrel plug got nudged loose. The node ran on battery without anyone noticing until the watchdog shut it down 10 minutes later, exactly as designed. After any work inside the rack, check that `/sys/class/power_supply/AC/online` reads `1`.
 
 ## Cold-boot ordering
 
 - **GPU containers** wait for a oneshot service that creates the NVIDIA device nodes before Proxmox starts guests. See [GPU Passthrough → Boot ordering](gpu-passthrough.md#boot-ordering).
-- **Network mounts** retry: Jellyfin's SMB mount has a retry timer, and Immich's NFS mount is checked before the stack is trusted.
+- **Mounts:** Jellyfin's SMB mount has a retry timer. Immich and Nextcloud use bind mounts of the local pool, so there's no network race any more.
 - Every production guest has `onboot: 1`.
 
 ## Detection & response
 
-- **[Uptime Kuma](../services/management/uptime-kuma.md)**: 42 monitors, with alerts to Discord (primary) and email
+- **[Uptime Kuma](../services/management/uptime-kuma.md)**: 37 active monitors, with alerts to Discord (primary) and email
 - **[Self-healing](../services/automation/self-healing.md)**: Kuma alerts go to a headless Claude run that can use only an allowlisted set of fixes
 - **Weekly health audit**: SMART (ATA + NVMe wear), ZFS health and scrub age, GPU temperature and Xid errors, backup freshness, and a check that every running guest has at least one Kuma monitor
-- **Mail relay** on both nodes, so vzdump and system alerts actually get delivered
+- **Mail relay** on the host, so vzdump and system alerts actually get delivered
 
 !!! tip "Postfix: `No worthy mechs found` isn't a bad password"
     If Postfix's SASL auth to Gmail fails with `no mechanism available`, the `libsasl2-modules` package is missing. The credential is fine. If IPv6 has no route, also set `smtp_address_preference = ipv4`.
 
 ## Known single points of failure
 
-- **Uptime Kuma and NPM** live on pve-guide (CT 121). If that node is down, monitoring and the reverse proxy go with it. This goes away when the array moves and CT 121 migrates to `pve`.
-- **The media dataset has no off-site copy** (see [Backups](backups.md#roadmap)).
+- **Everything is one machine now.** Since October 2026 every guest, the array and the backups share one laptop and one rack. That's simpler, and it removed every cross-node dependency, but the whole lab now shares one power path and one chassis.
+- **Monitoring lives on the thing it monitors.** Uptime Kuma (CT 121) runs on `pve`, so a full host outage silences the alerts too. An external heartbeat would cover it.
+- **No off-site copy yet** of either the guests or the media dataset (see [Backups](backups.md#roadmap)).
