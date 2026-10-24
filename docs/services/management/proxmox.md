@@ -12,7 +12,7 @@ The hypervisor platform. Since October 2026 it runs on a single node.
 - **Web UI:** port 8006, also fronted by NPM with TLS
 
 !!! note "Quorum with one node powered off"
-    A two-node cluster loses quorum if either node goes down, which makes `/etc/pve` read-only on the survivor. Proxmox's guest autostart also **waits for quorum**, so after a reboot of `pve` nothing starts until `pvecm expected 1` is run (it's a runtime setting and resets on every boot). That's the main reason not to leave a retired node in the cluster for long. Removing it with `pvecm delnode` makes `pve` a quorate cluster of one again. The old `two_node` corosync flag was removed during the July 2026 migration.
+    A two-node cluster loses quorum if either node goes down, which makes `/etc/pve` read-only on the survivor. Proxmox's guest autostart also **waits for quorum**, so after a reboot nothing would start until someone ran `pvecm expected 1`, which is a runtime setting that resets on every boot. That's a nasty surprise after an unattended power-loss reboot. The fix for the rollback window: give `pve` **2 of 3 votes** (`quorum_votes: 2` in `corosync.conf`, with `config_version` bumped), so it's quorate by itself. When the retired node is removed with `pvecm delnode`, the vote goes back to 1. The old `two_node` corosync flag was removed during the July 2026 migration.
 
 ## Guests
 

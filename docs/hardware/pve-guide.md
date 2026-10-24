@@ -13,7 +13,7 @@
 
 !!! tip "Lessons"
     - `zfs send` needs `-p` for container disks. Without it, the dataset properties Proxmox relies on (`acltype=posix`, `xattr=sa`) don't come across.
-    - With two nodes and one powered off, the survivor has no quorum. Proxmox won't start any guests after a reboot until `pvecm expected 1` is run.
+    - With two nodes and one powered off, the survivor has no quorum. Proxmox won't start any guests after a reboot until `pvecm expected 1` is run, and that resets every boot. Giving the survivor 2 of 3 votes for the rollback window makes reboots unattended-safe.
     - Bay and port order don't matter to ZFS. Label the caddies with drive serials anyway, so a failed disk can be found later.
 
 ## Specs (for the record)

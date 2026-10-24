@@ -8,9 +8,8 @@ A small watchdog on `pve` treats the laptop battery as a UPS:
 
 | Condition | Action |
 |---|---|
-| AC lost, restored within 10 minutes | Nothing (flickers and short outages ride through on battery) |
-| AC lost for **10 minutes** | Graceful shutdown of all guests, then the host |
-| Battery drops to **25%** (any time on battery) | Graceful shutdown immediately |
+| AC lost | Nothing. It rides through on battery for as long as the charge lasts (about an hour) |
+| Battery drops to **10%** | Graceful shutdown of all guests, then the host |
 | Power-supply sysfs unreadable or garbled | **Nothing.** It fails safe rather than risk a false shutdown |
 
 - Runs as a systemd timer every 30 seconds
@@ -26,7 +25,7 @@ The laptop also has **lid-close and sleep disabled** and **charging capped at 80
 The drive array has its own ATX power supply, which has **no** battery. If mains fails, the drives drop while the laptop keeps running, until the watchdog shuts it down. Putting the drive PSU on a small UPS is on the list.
 
 !!! warning "Check the charger after hardware work"
-    During the October 2026 drive install, the laptop's barrel plug got nudged loose. The node ran on battery without anyone noticing until the watchdog shut it down 10 minutes later, exactly as designed. After any work inside the rack, check that `/sys/class/power_supply/AC/online` reads `1`.
+    During the October 2026 drive install, the laptop's barrel plug got nudged loose. The node ran on battery without anyone noticing until the watchdog shut it down 10 minutes later (it had a 10-minute timer then; now it rides until 10% battery). After any work inside the rack, check that `/sys/class/power_supply/AC/online` reads `1`.
 
 ## Cold-boot ordering
 
