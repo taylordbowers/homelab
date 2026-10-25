@@ -1,6 +1,6 @@
 # Hardware Overview
 
-Since October 2026 the lab runs on **one** physical machine: a laptop running Proxmox VE 8.4, with the RAIDZ1 array in a 10-inch rack beside it.
+Since October 2026 the lab runs on **one** physical machine: a laptop running Proxmox VE 9.2, with the RAIDZ1 array in a 10-inch rack beside it.
 
 ## The node
 
@@ -58,6 +58,7 @@ The node sits on a flat `/24` home network behind the ISP gateway (`10.0.0.254`)
 | Jul 2026 | **pve** (laptop) joins. Every guest on pve2, plus most of pve-guide's, is migrated to it and verified. pve2 is decommissioned and the GTX 980 Ti retired |
 | Sep 2026 | The lab moves house. `pve` came up first and pve-guide followed; all guest IPs were re-pinned on the new network |
 | Oct 2026 | The four array drives move from pve-guide into the rack on `pve`. The last two containers follow, NFS is replaced with local mounts, and pve-guide is powered off. See [pve-guide](pve-guide.md) |
+| Oct 2026 | pve-guide is removed from the cluster, and `pve` is upgraded in place to Proxmox VE 9.2 (Debian 13) |
 | Planned | Rebuild pve-guide as an off-site Proxmox Backup Server at a family member's house |
 
 The laptop draws a fraction of the old towers' power, and its battery works as a built-in UPS. See [Power & Resilience](../infrastructure/power.md).

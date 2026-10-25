@@ -12,7 +12,7 @@
 | **Disk** | 1TB NVMe: 149GB LVM for Proxmox, the rest is the `flash` ZFS pool (800GB). A low-profile heatsink replaces the bottom cover's cooling |
 | **SATA** | ASM1166 6-port M.2→SATA card in a spare M.2 slot (native AHCI, per-drive SMART) |
 | **Array** | 4x 8TB WD Red Plus RAIDZ1 (`tank_new`) in the rack bays, on their own ATX power supply |
-| **Proxmox** | VE 8.4 (Debian 12) |
+| **Proxmox** | VE 9.2 (Debian 13), kernel 6.17 pinned for the NVIDIA driver |
 
 ## ZFS Pools
 

@@ -58,7 +58,7 @@ Addresses on this site are placeholders (`10.0.0.x`). They don't match the real 
 | Host | IP |
 |---|---|
 | ISP gateway | 10.0.0.254 |
-| pve-guide (powered off) | 10.0.0.1 |
+| pve-guide (retired) | 10.0.0.1 |
 | pve | 10.0.0.3 |
 | adguard CT (100) | 10.0.0.5 |
 | mediaServer VM (119) | 10.0.0.10 |

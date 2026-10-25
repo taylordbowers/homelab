@@ -25,7 +25,7 @@
 | **GPU** | Intel HD Graphics P4600 (iGPU, unused) |
 | **OS Disk** | 500GB HDD → Proxmox root (LVM) |
 | **Flash Pool** | 1TB HDD → `flash` ZFS (single disk; the name is historical) |
-| **Proxmox** | VE 8.4 (Debian 12) |
+| **Proxmox** | VE 8.4 (Debian 12) when retired; removed from the cluster 2026-10-25 |
 
 ## What's next
 

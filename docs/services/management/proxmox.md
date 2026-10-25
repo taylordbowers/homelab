@@ -5,14 +5,14 @@ The hypervisor platform. Since October 2026 it runs on a single node.
 ## Cluster
 
 - **Cluster name:** `Homelab`
-- **Nodes:** 1 live
+- **Nodes:** 1
     - **pve** (10.0.0.3): runs every workload and holds the RAIDZ1 array
-    - **pve-guide** (10.0.0.1): **powered off** 2026-10-24, still a cluster member for a short rollback window before `pvecm delnode`
-- **Version:** Proxmox VE 8.4 on Debian 12 (Bookworm)
+    - **pve-guide** (10.0.0.1): retired. Powered off 2026-10-24 and removed with `pvecm delnode` on 2026-10-25
+- **Version:** Proxmox VE 9.2 on Debian 13 (Trixie), upgraded in place from 8.4 in October 2026. Kernel pinned to 6.17 (see [GPU Passthrough](../../infrastructure/gpu-passthrough.md))
 - **Web UI:** port 8006, also fronted by NPM with TLS
 
-!!! note "Quorum with one node powered off"
-    A two-node cluster loses quorum if either node goes down, which makes `/etc/pve` read-only on the survivor. Proxmox's guest autostart also **waits for quorum**, so after a reboot nothing would start until someone ran `pvecm expected 1`, which is a runtime setting that resets on every boot. That's a nasty surprise after an unattended power-loss reboot. The fix for the rollback window: give `pve` **2 of 3 votes** (`quorum_votes: 2` in `corosync.conf`, with `config_version` bumped), so it's quorate by itself. When the retired node is removed with `pvecm delnode`, the vote goes back to 1. The old `two_node` corosync flag was removed during the July 2026 migration.
+!!! note "Quorum during the retirement window (historical)"
+    Now that the cluster is a single node with one vote, this no longer applies. A two-node cluster loses quorum if either node goes down, which makes `/etc/pve` read-only on the survivor. Proxmox's guest autostart also **waits for quorum**, so after a reboot nothing would start until someone ran `pvecm expected 1`, which is a runtime setting that resets on every boot. That's a nasty surprise after an unattended power-loss reboot. The fix for the rollback window: give `pve` **2 of 3 votes** (`quorum_votes: 2` in `corosync.conf`, with `config_version` bumped), so it's quorate by itself. When the retired node is removed with `pvecm delnode`, the vote goes back to 1. The old `two_node` corosync flag was removed during the July 2026 migration.
 
 ## Guests
 

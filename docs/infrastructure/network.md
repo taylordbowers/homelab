@@ -62,7 +62,7 @@ Every server guest has a fixed address: a static IP in the LXC config, or a pinn
 
 | Host | IP | Type |
 |---|---|---|
-| pve-guide (powered off) | 10.0.0.1 | Static |
+| pve-guide (retired) | 10.0.0.1 | Static |
 | pve | 10.0.0.3 | Static |
 | adguard CT | 10.0.0.5 | Static |
 | mediaServer VM | 10.0.0.10 | Pinned lease |

@@ -6,7 +6,8 @@ The NVIDIA RTX A3000 Laptop GPU on `pve` is shared by three LXC containers at on
 
 - **Card:** NVIDIA RTX A3000 Laptop GPU (Ampere, GA104)
 - **VRAM:** 6 GB
-- **Host driver:** NVIDIA production branch, installed on the host. Containers bind-mount the host's userspace libraries so the versions always match
+- **Host driver:** NVIDIA 615 (open kernel module) from NVIDIA's own Debian 13 repo, headless (`nvidia-driver-cuda` + `nvidia-kernel-open-dkms`). Containers bind-mount the host's userspace libraries so the versions always match
+- **Kernel:** pinned to 6.17 with `proxmox-boot-tool kernel pin`. The 615 module doesn't build against Proxmox's 7.0 kernel yet, so 7.0 stays installed but unbooted
 - **Node:** pve (10.0.0.3)
 - **Encoders:** NVENC h264 / hevc / **av1** (the retired GTX 980 Ti had no AV1 encode)
 
@@ -46,6 +47,9 @@ lxc.mount.entry: /usr/lib/x86_64-linux-gnu/nvidia/current usr/lib/x86_64-linux-g
 lxc.apparmor.profile: unconfined
 lxc.cap.drop:
 ```
+
+!!! tip "Library path after the PVE 9 upgrade"
+    Debian's own NVIDIA packages install the userspace libraries into `/usr/lib/x86_64-linux-gnu/nvidia/current`, which is what the containers bind-mount. NVIDIA's repo installs them straight into `/usr/lib/x86_64-linux-gnu/` instead, which would leave that bind mount silently empty (it's `optional`). A small script copies the driver's libraries into `nvidia/current`, and an apt `DPkg::Post-Invoke` hook re-runs it after every package change, so the container configs never had to change. Run `ldconfig` inside each container after a driver update.
 
 > **Why `lxc.cap.drop:` (empty)?** `/usr/share/lxc/config/common.conf` drops `mac_admin` by default, which stops Docker from loading AppArmor profiles even in privileged containers. An empty value overrides the drop list.
 
